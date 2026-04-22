@@ -1,0 +1,139 @@
+:root {
+    --bg-color: #0b0f0e;
+    --primary-green: #a7f3d0;
+    --text-muted: #94a3b8;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    background: radial-gradient(circle at top right, #251a2e, #0b0f0e);
+    border-radius: 40px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Navegación */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 80px;
+}
+
+.logo { font-weight: 700; font-size: 1.5rem; }
+.logo span { color: #974ade; }
+
+nav ul { display: flex; list-style: none; gap: 30px; }
+nav ul a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+
+.btn-contact {
+    background: transparent;
+    border: 1px solid var(--text-muted);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 100px;
+}
+
+.hero-text { max-width: 500px; }
+.tag { color: #714ade; font-size: 0.8rem; font-weight: bold; letter-spacing: 2px; }
+h1 { font-size: 3.5rem; margin: 15px 0; line-height: 1.1; }
+p { color: var(--text-muted); line-height: 1.6; }
+
+.cta-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.learn-more {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-color: #4ade80;
+}
+
+.arrow-btn {
+    background: white;
+    color: black;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Tarjeta Glassmorphism */
+.card-container { position: relative; }
+
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 25px;
+    width: 380px;
+    z-index: 2;
+    position: relative;
+}
+
+.bg-glow {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    background: #8e2fdb;
+    filter: blur(80px);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-20%, -20%);
+    z-index: 1;
+    opacity: 0.6;
+}
+
+.card-number { font-size: 1.5rem; margin: 40px 0; letter-spacing: 2px; }
+.card-info { display: flex; gap: 40px; }
+.label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
+.val { font-size: 0.9rem; }
+
+/* Features */
+.features h2 { text-align: center; margin-bottom: 50px; font-size: 2rem; }
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.feature-item { display: flex; gap: 15px; }
+.feature-item h3 { margin: 0; font-size: 1rem; }
+.feature-item p { font-size: 0.8rem; margin: 5px 0; }
+.icon {
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 12px;
+    height: fit-content;
+}
