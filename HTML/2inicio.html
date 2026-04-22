@@ -10,11 +10,11 @@
 <body>
     <div class="container">
         <nav>
-            <div class="logo">Biddo<span>.</span></div>
+            <div class="logo">Biddo<span class="Biddo-Dot">.</span></div>
             <ul>
                 <li><a href="#" class="anchors active">Inicio</a></li>
-                <li><a href="../HTML/monedero.html" class="anchors">Monedero</a></li>
-                <li><a href="#" class="anchors">Mercado</a></li>
+                <li><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
+                <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
                 <li><a href="#"class="anchors">Subasta</a></li>
             </ul>
             <div class="nav-Btns">
@@ -27,7 +27,7 @@
             <div class="hero-text">
                 <span class="tag"></span>
                 <h1>Tu mejor herramienta de negocio</h1>
-                <p>We have a large section where we give tips on how to manage your finances.</p>
+                <p>Con <span>Biddo</span>, serás capaz de comprar, vender y participar en subastas de forma segura.</p>
                 
                 <div class="cta-group">
                     <a href="#" class="learn-more">¡Ingresa ya!</a>
@@ -35,27 +35,29 @@
             </div>
 
             <div class="card-container">
-                <div class="card">
-                    <div class="card-top">
-                        <div class="circles"></div>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" width="40">
-                    </div>
-                    <div class="card-number">
-                        <span class="label">Número de Tarjeta:</span>
-                        <h3>5337 8622 4901 3294</h3>
-                    </div>
-                    <div class="card-info">
-                        <div class="info-group">
-                            <span class="label">Nombre:</span>
-                            <span class="val">Nathalia Maita</span>
-                        </div>
-                        <div class="info-group">
-                            <span class="label">Fecha Exp.</span>
-                            <span class="val">03/37</span>
+                <div class="card" id="biddo-card">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-top">
+                                <span class="brand">Biddo<span class="Biddo-Dot">.</span></span>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MC" width="45">
+                            </div>
+                            <div class="card-number" id="card-num">•••• •••• •••• 3294</div>
+                            <div class="card-bottom">
+                                <div class="info">
+                                    <span class="label">Titular</span>
+                                    <span class="val">Nathalia Maita</span>
+                                </div>
+                                <div class="info">
+                                    <span class="label">Fecha Exp.</span>
+                                    <span class="val" id="card-exp">••/••</span>
+                                </div>
+                                <button class="btn-reveal" onclick="toggleCardInfo()">Ver Datos</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="bg-glow"></div>
+                <div class="glow-effect"></div>
             </div>
         </main>
 

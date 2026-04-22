@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Inicio</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">Biddo<span>.</span></div>
+            <ul>
+                <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
+                <li><a href="" class="anchors active">Monedero</a></li>
+                <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
+                <li><a href="" class="anchors">Subasta</a></li>
+            </ul>
+            <div class="nav-Btns">
+                <button class="btn-contact">Iniciar Sesión</button>
+            </div>
+        </nav>
+        
+        <h1>Mi Monedero</h1>
+        
+        <main class="Main-section">
+            <section class="balance-main">
+                <span class="label">Saldo disponible ⓘ</span>
+                <h2 id="total-balance">1,250.00 <span>BDC</span></h2>
+                <span class="label">Saldo Retenido ⓘ</span>
+                <h2 id="reteined-balance">250.00 <span>BDC</span></h2>
+            </section>
+            
+            <section class="card-box">
+                <div class="card" id="biddo-card">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-top">
+                                <span class="brand">Biddo<b>.</b></span>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MC" width="45">
+                            </div>
+                            <div class="card-number" id="card-num">•••• •••• •••• 3294</div>
+                            <div class="card-bottom">
+                                <div class="info">
+                                    <span class="label">Titular</span>
+                                    <span class="val">Nathalia Maita</span>
+                                </div>
+                                <div class="info">
+                                    <span class="label">Fecha Exp.</span>
+                                    <span class="val" id="card-exp">••/••</span>
+                                </div>
+                                <button class="btn-reveal" onclick="toggleCardInfo()">Ver Datos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glow-effect"></div>
+            </section>
+        </main>
+
+        <section class="actions">
+            <button class="action-btn">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-circle-arrow-down"></i>
+                </div>
+                <span>Recargar</span>
+            </button>
+            <button class="action-btn">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <span>Transferir</span>
+            </button>
+            <button class="action-btn">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span>Retirar</span>
+            </button>
+        </section>
+
+        <section class="history">
+            <h3>Historial de Movimientos</h3>
+            <div class="history-list">
+                <div class="transaction success">
+                    <div class="t-icon"><i class="fa-solid fa-check"></i></div>
+                    <div class="t-info">
+                        <span class="t-type">Recarga Bidcoins</span>
+                        <span class="t-date">22 Abr 2026 - 10:15</span>
+                    </div>
+                    <div class="t-amount">+ 500.00 BDC</div>
+                </div>
+
+                <div class="transaction failed">
+                    <div class="t-icon"><i class="fa-solid fa-xmark"></i></div>
+                    <div class="t-info">
+                        <span class="t-type">Transferencia enviada</span>
+                        <span class="t-date">21 Abr 2026 - 14:20</span>
+                    </div>
+                    <div class="t-amount">- 120.00 BDC</div>
+                </div>
+
+                <div class="transaction pending">
+                    <div class="t-icon"><i class="fa-solid fa-clock"></i></div>
+                    <div class="t-info">
+                        <span class="t-type">Retiro a Banco Exterior</span>
+                        <span class="t-date">Hoy - En espera</span>
+                    </div>
+                    <div class="t-amount">- 300.00 BDC</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let hidden = true;
+        function toggleCardInfo() {
+            const num = document.getElementById('card-num');
+            const exp = document.getElementById('card-exp');
+            const btn = document.querySelector('.btn-reveal');
+            
+            if(hidden) {
+                num.innerText = "5337 8622 4901 3294";
+                exp.innerText = "08/28";
+                btn.innerText = "Ocultar";
+            } else {
+                num.innerText = "•••• •••• •••• 3294";
+                exp.innerText = "••/••";
+                btn.innerText = "Ver Datos";
+            }
+            hidden = !hidden;
+        }
+    </script>
+</body>
+</html>

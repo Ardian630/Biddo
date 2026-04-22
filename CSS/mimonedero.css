@@ -1,17 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
-    --bg-dark: #0b0f0e;
-    --card-glass:rgba(255, 255, 255, 0.1);
+    --bg-color: #0b0f0e;
+    --primary-green: #a7f3d0;
+    --text-muted: #94a3b8;
+    --card-glass: rgba(255, 255, 255, 0.1);
     --neon-green: #4ade80;
     --error-red: #f87171;
     --wait-orange: #fbbf24;
     --text-main: #ffffff;
     --text-dim: #94a3b8;
-    --text-muted: #94a3b8;
 }
+
 body {
-    background-color: var(--bg-dark);
+    background-color: var(--bg-color);
     color: white;
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -20,7 +22,7 @@ body {
     justify-content: center;
 }
 
-.wallet-container {
+.container {
     max-width: 1300px;
     width: 100%;
     background: radial-gradient(circle at top right, #251a2e, #0b0f0e);
@@ -30,8 +32,7 @@ body {
     overflow: hidden;
 }
 
-/* Header */
-header { margin-bottom: 80px; }
+/* Navegación */
 nav {
     display: flex;
     justify-content: space-between;
@@ -77,12 +78,33 @@ nav ul .active{
 
     color: #101;
 }
-h1 { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
-.balance-main .label { color: var(--text-dim); font-size: 0.9rem; }
-.balance-main h2 { font-size: 2.5rem; margin: 5px 0; }
-.balance-main h2 span { color: #974ade; font-size: 1.2rem; }
 
-/* Tarjeta */
+h1 {
+    font-size: 2.3rem;
+    margin-bottom: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+main{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 30px;
+}
+
+.balance-main .label {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+.balance-main h2 {
+    font-size: 2.5rem;
+    margin: 5px 0;
+}
+.balance-main h2 span {
+    color: #974ade;
+    font-size: 1.2rem;
+}
+
 .card-box {
     position: relative;
     width: 480px;
@@ -122,21 +144,28 @@ h1 { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
 }
 
 .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-.label { display: block; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.label { display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; }
 .btn-reveal {
     font-family: "Poppins", sans-serif;
-    background: white;
+    background: transparent;
     border: none;
     padding: 8px 15px;
-    border-radius: 12px;
-    font-weight: 600;
+    border: 1px solid var(--text-muted);
+    border-radius: 20px;
     cursor: pointer;
     font-size: 0.8rem;
     transition: transform 0.2s;
+    color: white;
+}
+.btn-reveal:hover{
+    background-color: white;
+    color: #101;
 }
 .btn-reveal:active { transform: scale(0.95); }
 
-/* Acciones */
+
+/*Botones para lña Tarjeta*/
+
 .actions {
     display: flex;
     justify-content: space-between;
@@ -166,7 +195,7 @@ h1 { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
 }
 .action-btn:hover .icon-circle { background: rgba(255,255,255,0.15); }
 
-/* Historial */
+/*Historico de movimientos*/
 .history h3 { font-size: 1.1rem; margin-bottom: 20px; }
 .history-list { display: flex; flex-direction: column; gap: 15px; }
 

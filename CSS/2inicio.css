@@ -4,7 +4,14 @@
     --bg-color: #0b0f0e;
     --primary-green: #a7f3d0;
     --text-muted: #94a3b8;
-    --glass-bg: rgba(255, 255, 255, 0.1);
+    --card-glass: rgba(255, 255, 255, 0.1);
+    --text-dim: #94a3b8;
+    --text-main: #ffffff;
+    --neon-green: #4ade80;
+}
+
+html {
+    scrollbar-gutter: stable;
 }
 
 body {
@@ -36,7 +43,8 @@ nav {
 }
 
 .logo { font-weight: 700; font-size: 1.5rem; }
-.logo span { color: #974ade; }
+
+.Biddo-Dot { color: #974ade; }
 
 nav ul { display: flex;
     list-style: none;
@@ -110,37 +118,61 @@ p { color: var(--text-muted); line-height: 1.6; }
 
 
 /* Tarjeta Glassmorphism */
-.card-container { position: relative; }
+.card-container {
+    position: relative;
+    width: 480px;
+}
 
 .card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 30px;
-    border-radius: 25px;
-    width: 380px;
-    z-index: 2;
+    background: var(--card-glass);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 25px;
     position: relative;
+    z-index: 2;
 }
 
-.bg-glow {
+.glow-effect {
     position: absolute;
-    width: 250px;
-    height: 250px;
-    background: #8e2fdb;
-    filter: blur(80px);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-20%, -20%);
+    top: 50%; left: 50%;
+    width: 500px; height: 500px;
+    background: #974ade;
+    filter: blur(90px);
+    opacity: 0.3;
     z-index: 1;
-    opacity: 0.6;
+    transform: translate(-20%, -20%);
 }
 
-.card-number { font-size: 1.5rem; margin: 40px 0; letter-spacing: 2px; }
-.card-info { display: flex; gap: 40px; }
-.label { display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px; }
-.val { font-size: 0.9rem; }
+.card-top { display: flex; justify-content: space-between; align-items: center; }
+.brand { font-size: 1.2rem; font-weight: bold; }
+
+.card-number {
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    margin: 35px 0;
+    font-family: 'Poppins', monospace;
+}
+
+.card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+.label { display: block; font-size: 0.7rem; color: var(--text-dim); margin-bottom: 4px; }
+.btn-reveal {
+    font-family: "Poppins", sans-serif;
+    background: transparent;
+    border: none;
+    padding: 8px 15px;
+    border: 1px solid var(--text-muted);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+    color: white;
+}
+.btn-reveal:hover{
+    background-color: white;
+    color: #101;
+}
+.btn-reveal:active { transform: scale(0.95); }
 
 /* Features */
 .features h2 { text-align: center; margin-bottom: 50px; font-size: 2rem; }
