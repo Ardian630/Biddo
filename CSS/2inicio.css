@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root {
     --bg-color: #0b0f0e;
     --primary-green: #a7f3d0;
@@ -8,7 +10,7 @@
 body {
     background-color: var(--bg-color);
     color: white;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 20px;
     display: flex;
@@ -16,7 +18,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1300px;
     width: 100%;
     background: radial-gradient(circle at top right, #251a2e, #0b0f0e);
     border-radius: 40px;
@@ -36,16 +38,40 @@ nav {
 .logo { font-weight: 700; font-size: 1.5rem; }
 .logo span { color: #974ade; }
 
-nav ul { display: flex; list-style: none; gap: 30px; }
-nav ul a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+nav ul { display: flex;
+    list-style: none;
+    gap: 30px; }
+nav ul a {
+    display: inline-block;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: .2s;
+}
+nav ul a:hover{
+    color: #974ade;
+    transform: translateY(-6px);
+}
+nav ul .active{
+    color: #974ade;
+    border-bottom: 1px solid #974ade;
+    transform: translateY(-6px);
+}
 
 .btn-contact {
     background: transparent;
+    font-family: "Poppins", sans-serif;
     border: 1px solid var(--text-muted);
     color: white;
     padding: 10px 25px;
     border-radius: 20px;
+    transition: .2s;
     cursor: pointer;
+}
+.btn-contact:hover{
+    background-color: white;
+
+    color: #101;
 }
 
 /* Hero Section */
@@ -70,22 +96,18 @@ p { color: var(--text-muted); line-height: 1.6; }
 
 .learn-more {
     color: white;
-    text-decoration: underline;
-    text-underline-offset: 8px;
-    text-decoration-color: #4ade80;
+    background-color: transparent;
+    border: 1px solid var(--text-muted);
+    padding: 10px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: .2s;
+}
+.learn-more:hover{
+    color: #101;
+    background-color: white;
 }
 
-.arrow-btn {
-    background: white;
-    color: black;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
 
 /* Tarjeta Glassmorphism */
 .card-container { position: relative; }

@@ -1,0 +1,200 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --bg-dark: #0b0f0e;
+    --card-glass:rgba(255, 255, 255, 0.1);
+    --neon-green: #4ade80;
+    --error-red: #f87171;
+    --wait-orange: #fbbf24;
+    --text-main: #ffffff;
+    --text-dim: #94a3b8;
+    --text-muted: #94a3b8;
+}
+body {
+    background-color: var(--bg-dark);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.wallet-container {
+    max-width: 1300px;
+    width: 100%;
+    background: radial-gradient(circle at top right, #251a2e, #0b0f0e);
+    border-radius: 40px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Header */
+header { margin-bottom: 80px; }
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 80px;
+}
+
+.logo { font-weight: 700; font-size: 1.5rem; }
+.logo span { color: #974ade; }
+
+nav ul { display: flex;
+    list-style: none;
+    gap: 30px; }
+nav ul a {
+    display: inline-block;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: .2s;
+}
+nav ul a:hover{
+    color: #974ade;
+    transform: translateY(-6px);
+}
+nav ul .active{
+    color: #974ade;
+    border-bottom: 1px solid #974ade;
+    transform: translateY(-6px);
+}
+
+.btn-contact {
+    background: transparent;
+    font-family: "Poppins", sans-serif;
+    border: 1px solid var(--text-muted);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 20px;
+    transition: .2s;
+    cursor: pointer;
+}
+.btn-contact:hover{
+    background-color: white;
+
+    color: #101;
+}
+h1 { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
+.balance-main .label { color: var(--text-dim); font-size: 0.9rem; }
+.balance-main h2 { font-size: 2.5rem; margin: 5px 0; }
+.balance-main h2 span { color: #974ade; font-size: 1.2rem; }
+
+/* Tarjeta */
+.card-box {
+    position: relative;
+    width: 480px;
+    margin-bottom: 40px;
+    margin: auto;
+}
+.card {
+    background: var(--card-glass);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.glow-effect {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 500px; height: 500px;
+    background: #974ade;
+    filter: blur(90px);
+    opacity: 0.3;
+    z-index: 1;
+    transform: translate(-20%, -20%);
+}
+
+.card-top { display: flex; justify-content: space-between; align-items: center; }
+.brand { font-size: 1.2rem; font-weight: bold; }
+.brand b { color: var(--neon-green); }
+
+.card-number {
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    margin: 35px 0;
+    font-family: 'Poppins', monospace;
+}
+
+.card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+.label { display: block; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px; }
+.btn-reveal {
+    font-family: "Poppins", sans-serif;
+    background: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+}
+.btn-reveal:active { transform: scale(0.95); }
+
+/* Acciones */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-family: "Poppins", sans-serif;
+}
+.icon-circle {
+    background: var(--card-glass);
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: background 0.3s;
+}
+.action-btn:hover .icon-circle { background: rgba(255,255,255,0.15); }
+
+/* Historial */
+.history h3 { font-size: 1.1rem; margin-bottom: 20px; }
+.history-list { display: flex; flex-direction: column; gap: 15px; }
+
+.transaction {
+    background: rgba(255,255,255,0.03);
+    padding: 15px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.t-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.t-info { flex-grow: 1; }
+.t-type { display: block; font-size: 0.95rem; }
+.t-date { font-size: 0.75rem; color: var(--text-dim); }
+.t-amount { font-weight: 600; font-size: 0.9rem; }
+
+/* Estados */
+.success .t-icon { background: rgba(74, 222, 128, 0.15); color: var(--neon-green); }
+.failed .t-icon { background: rgba(248, 113, 113, 0.15); color: var(--error-red); }
+.pending .t-icon { background: rgba(251, 191, 36, 0.15); color: var(--wait-orange); }
