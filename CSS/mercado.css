@@ -21,6 +21,7 @@
     align-items: center;
     gap: 12px;
     width: 380px;
+    margin: auto;
 }
 
 .search-bar input {

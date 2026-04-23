@@ -1,0 +1,75 @@
+/* Estilos específicos para la tarjeta de subasta */
+.auction-card {
+    border: 1px solid rgba(151, 74, 222, 0.3); /* Borde púrpura más notable */
+}
+
+.live-tag {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #f87171;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 5;
+}
+
+.live-tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.auction-info {
+    margin-bottom: 15px;
+    background: rgba(151, 74, 222, 0.1);
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.bid-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+}
+
+.bid-btn {
+    width: 100%;
+    background: #974ade;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bid-btn:hover {
+    background: #af66f0;
+    box-shadow: 0 0 20px rgba(151, 74, 222, 0.4);
+    transform: scale(1.02);
+}
+
+/* Modificación de la barra de búsqueda para subastas */
+.search-bar i {
+    color: #974ade;
+}

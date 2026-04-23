@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Subastas</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/mercado.css">
+    <link rel="stylesheet" href="../CSS/subastas.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="logo">Biddo<span>.</span></div>
+            <ul>
+                <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
+                <li><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
+                <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
+                <li><a href="" class="anchors active">Subasta</a></li>
+            </ul>
+            <div class="nav-Btns">
+                <button class="btn-contact">Iniciar Sesión</button>
+            </div>
+        </nav>
+        <h1>Panel de Subastas</h1>
+        <header class="market-header">
+            <div class="search-bar">
+                <i class="fa-solid fa-gavel"></i>
+                <input type="text" placeholder="Buscar subastas activas...">
+            </div>
+        </header>
+
+        <main class="market-content">
+            
+            <section class="category-section">
+                <h2 class="category-title">Subastas Destacadas</h2>
+                <div class="slider-wrapper">
+                    <button class="nav-prev" onclick="moveSlider(this, -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-next" onclick="moveSlider(this, 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                    
+                    <div class="product-slider">
+                        <article class="product-card auction-card">
+                            <div class="image-container">
+                                <div class="live-tag">En vivo</div>
+                                <img src="../assets/img/img2.jpeg" alt="Producto" class="product-img">
+                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
+                            </div>
+                            <div class="product-details">
+                                <div class="seller-info">
+                                    <div class="seller-avatar">
+                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
+                                    </div>
+                                    <span class="seller-name">Coleccionista_01</span>
+                                </div>
+                                <h3 class="product-title">NFT CryptoPunk #772</h3>
+                                
+                                <div class="auction-info">
+                                    <span class="bid-label">Puja más alta</span>
+                                    <div class="price-tag">1,450.00 <span>BDC</span></div>
+                                </div>
+                                
+                                <button class="bid-btn">Pujar ahora</button>
+                            </div>
+                        </article>
+
+                        <article class="product-card auction-card">
+                            <div class="image-container">
+                                <div class="live-tag">En vivo</div>
+                                <img src="../assets/img/img3.jpeg" alt="Producto" class="product-img">
+                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
+                            </div>
+                            <div class="product-details">
+                                <div class="seller-info">
+                                    <div class="seller-avatar">
+                                        <img src="../assets/img/user2.jpeg" alt="Vendedor">
+                                        <i class="fa-solid fa-circle-check verified-badge"></i>
+                                    </div>
+                                    <span class="seller-name">Arte Moderno VE</span>
+                                </div>
+                                <h3 class="product-title">Escultura Cinética Minimalista</h3>
+                                
+                                <div class="auction-info">
+                                    <span class="bid-label">Puja más alta</span>
+                                    <div class="price-tag">2,100.00 <span>BDC</span></div>
+                                </div>
+                                
+                                <button class="bid-btn">Pujar ahora</button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="category-section">
+                <h2 class="category-title">Arte Digital</h2>
+                <div class="slider-wrapper">
+                    <button class="nav-prev" onclick="moveSlider(this, -1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-next" onclick="moveSlider(this, 1)"><i class="fa-solid fa-chevron-right"></i></button>
+                    
+                    <div class="product-slider">
+                        </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        function moveSlider(button, direction) {
+            const wrapper = button.parentElement;
+            const slider = wrapper.querySelector('.product-slider');
+            const scrollAmount = 330;
+            
+            slider.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>

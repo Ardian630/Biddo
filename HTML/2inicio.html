@@ -15,7 +15,7 @@
                 <li><a href="#" class="anchors active">Inicio</a></li>
                 <li><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
                 <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
-                <li><a href="#"class="anchors">Subasta</a></li>
+                <li><a href="../HTML/subastas.html"class="anchors">Subasta</a></li>
             </ul>
             <div class="nav-Btns">
                 <button class="btn-contact">Iniciar Sesión</button>
@@ -52,7 +52,7 @@
                                     <span class="label">Fecha Exp.</span>
                                     <span class="val" id="card-exp">••/••</span>
                                 </div>
-                                <button class="btn-reveal" onclick="toggleCardInfo()">Ver Datos</button>
+                                <button class="btn-reveal" onclick="toggleCardInfo()"> </button>
                             </div>
                         </div>
                     </div>
@@ -88,5 +88,16 @@
             </div>
         </section>
     </div>
+    <script>
+        // Seleccionamos el botón por su clase
+        const loginBtn = document.querySelector('.btn-contact');
+
+        // Añadimos el evento de clic para redireccionar
+        loginBtn.addEventListener('click', () => {
+            window.location.href = 'login.html'; 
+            // Nota: Asegúrate de que la ruta sea correcta según tu carpeta
+            // Si el login está en una carpeta distinta usa: '../HTML/login.html'
+        });
+    </script>
 </body>
 </html>

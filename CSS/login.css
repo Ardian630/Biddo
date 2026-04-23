@@ -1,0 +1,162 @@
+/* Centrado de la caja de login */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    position: relative;
+}
+
+/* Botón Volver */
+.back-btn {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.back-btn:hover {
+    color: #974ade;
+    transform: translateX(-5px);
+}
+
+/* Caja de Login (Glassmorphism) */
+.login-box {
+    background: var(--card-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 50px;
+    border-radius: 40px;
+    width: 100%;
+    max-width: 450px;
+    z-index: 2;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-header .logo {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+/* Estilos de Formulario */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    color: #974ade;
+    font-size: 0.9rem;
+}
+
+.input-wrapper input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 15px 12px 45px;
+    border-radius: 15px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: #974ade;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(151, 74, 222, 0.2);
+}
+
+/* Opciones y Botón */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text-dim);
+}
+
+.forgot-pass {
+    color: #974ade;
+    text-decoration: none;
+}
+
+.login-submit {
+    background: #974ade;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.login-submit:hover {
+    background: #af66f0;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(151, 74, 222, 0.3);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.login-footer a {
+    color: #974ade;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Ajuste del brillo para que esté centrado tras la caja */
+.login-container .glow-effect {
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+}

@@ -161,16 +161,13 @@ p { color: var(--text-muted); line-height: 1.6; }
     background: transparent;
     border: none;
     padding: 8px 15px;
-    border: 1px solid var(--text-muted);
+    border: 1px solid transparent;
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.8rem;
     transition: transform 0.2s;
-    color: white;
-}
-.btn-reveal:hover{
-    background-color: white;
-    color: #101;
+    color: transparent;
+    cursor: default;
 }
 .btn-reveal:active { transform: scale(0.95); }
 
