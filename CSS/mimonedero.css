@@ -134,7 +134,7 @@ main{
 
 .card-top { display: flex; justify-content: space-between; align-items: center; }
 .brand { font-size: 1.2rem; font-weight: bold; }
-.brand b { color: var(--neon-green); }
+.brand b { color: #974ade; }
 
 .card-number {
     font-size: 1.4rem;
@@ -181,6 +181,7 @@ main{
     align-items: center;
     gap: 10px;
     font-family: "Poppins", sans-serif;
+    z-index: 10;
 }
 .icon-circle {
     background: var(--card-glass);
