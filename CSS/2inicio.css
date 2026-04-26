@@ -110,6 +110,7 @@ p { color: var(--text-muted); line-height: 1.6; }
     border-radius: 30px;
     text-decoration: none;
     transition: .2s;
+    margin: auto;
 }
 .learn-more:hover{
     color: #101;
@@ -187,4 +188,97 @@ p { color: var(--text-muted); line-height: 1.6; }
     padding: 10px;
     border-radius: 12px;
     height: fit-content;
+}
+
+/* =========================================
+   ADAPTACIÓN RESPONSIVE (AGREGAR AL FINAL)
+   ========================================= */
+
+@media (max-width: 1024px) {
+    /* En tablets, apilamos el texto y la tarjeta */
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 50px;
+    }
+
+    .hero-text {
+        max-width: 100%;
+    }
+
+    h1 {
+        font-size: 3rem; /* Reducimos un poco el tamaño del título */
+    }
+
+    .card-container {
+        width: 100%;
+        max-width: 480px; /* Mantiene su tamaño máximo pero se centra */
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        border-radius: 25px; /* Bordes menos pronunciados en móviles */
+        padding: 25px;
+    }
+
+    /* Navegación móvil */
+    nav {
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    nav ul {
+        width: 100%;
+        justify-content: center;
+        gap: 15px;
+        padding: 0;
+        overflow-x: auto; /* Permite scroll horizontal si el menú es largo */
+        white-space: nowrap;
+    }
+
+    /* Ajuste de la tarjeta para pantallas pequeñas */
+    .card-container {
+        max-width: 100%;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card-number {
+        font-size: 1.1rem; /* Ajuste para que el número no se corte */
+        letter-spacing: 2px;
+    }
+
+    /* Rejilla de características a una sola columna */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-text p {
+        font-size: 1rem;
+    }
+
+    .card-number {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
 }

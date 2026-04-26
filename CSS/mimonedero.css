@@ -194,6 +194,9 @@ main{
     transition: background 0.3s;
 }
 .action-btn:hover .icon-circle { background: rgba(255,255,255,0.15); }
+.action-btn:active{
+    background-color: rgba(255,255,255,0.15);
+}
 
 /*Historico de movimientos*/
 .history h3 { font-size: 1.1rem; margin-bottom: 20px; }
@@ -227,3 +230,196 @@ main{
 .success .t-icon { background: rgba(74, 222, 128, 0.15); color: var(--neon-green); }
 .failed .t-icon { background: rgba(248, 113, 113, 0.15); color: var(--error-red); }
 .pending .t-icon { background: rgba(251, 191, 36, 0.15); color: var(--wait-orange); }
+
+/* =========================================
+   DISEÑO 100% RESPONSIVE - TARJETA COMPLETA
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+    .hero-text { max-width: 100%; }
+    .card-box {
+        width: 100%;
+        max-width: 480px; /* Mantiene su tamaño máximo pero se centra */
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Ajustes del contenedor principal */
+    .container {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    /* Navegación */
+    nav {
+        flex-direction: column;
+        gap: 20px;
+    }
+    nav ul {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* --- LA TARJETA COMPLETA --- */
+    .card-container {
+        width: 100%; /* Ocupa el ancho disponible */
+        max-width: 420px; /* Pero no más de su tamaño original */
+        height: auto;
+        padding: 10px;
+    }
+
+    .card {
+        width: 100%;
+        box-sizing: border-box; /* Asegura que el padding no la ensanche */
+    }
+
+    .card-number {
+        font-size: 1.1rem; /* Tamaño ajustable para que no se rompa la línea */
+        letter-spacing: 2px;
+        margin: 25px 0;
+    }
+
+    /* Garantías */
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 2.2rem; }
+
+    /* Ajuste fino para celulares muy angostos */
+    .card-container {
+        max-width: 100%;
+    }
+
+    .card {
+        padding: 15px; /* Menos espacio interno para ganar espacio de lectura */
+    }
+
+    .card-number {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .card-top img {
+        width: 35px; /* Logo de Mastercard más pequeño */
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+}
+
+/* =========================================
+   DISEÑO 100% RESPONSIVE - TARJETA COMPLETA
+   ========================================= */
+
+@media (max-width: 1024px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+    .hero-text { max-width: 100%; }
+    .card-box {
+        width: 100%;
+        max-width: 480px; /* Mantiene su tamaño máximo pero se centra */
+        margin: 0 auto;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    body{
+        padding: 10px;
+    }
+    /* Ajustes del contenedor principal */
+    .container {
+        padding: 25px;
+        border-radius: 25px;
+    }
+
+    /* Navegación */
+    nav {
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    nav ul {
+        width: 100%;
+        gap: 15px;
+        justify-content: center;
+        padding: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* --- LA TARJETA COMPLETA --- */
+
+    .card {
+        padding: 20px;
+    }
+
+    .card-number {
+        font-size: 1.1rem; /* Ajuste para que el número no se corte */
+        letter-spacing: 2px;
+    }
+
+    /* Garantías */
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 2.2rem; }
+
+    .Main-section{
+        display: flex;
+        flex-direction: column;
+    }
+    .balance-main{
+        display: flex;
+        justify-content: space-between;
+    }
+    .balance-main .label{
+        font-size: 12px;
+    }
+    .balance-main h2{
+        font-size: 18px;
+    }
+    .container{
+        width: 100%;
+    }
+    .Main-section{
+        width: 100%;
+        margin: auto;
+        align-items: center;
+    }
+    .balance-contain{
+        margin: 0 15px;
+    }
+    .card-number {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .card-top img {
+        width: 35px; /* Logo de Mastercard más pequeño */
+    }
+    .card-bottom .val{
+        font-size: 14px;
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+}
