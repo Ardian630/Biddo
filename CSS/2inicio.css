@@ -190,6 +190,156 @@ p { color: var(--text-muted); line-height: 1.6; }
     height: fit-content;
 }
 
+/* Contenedor principal de la derecha */
+.nav-auth-container {
+    display: flex;
+    align-items: center;
+    min-width: 150px;
+    justify-content: flex-end;
+}
+
+/* Gatillo del Perfil */
+.user-profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 30px;
+    transition: background 0.3s ease;
+}
+
+.user-profile-trigger:hover {
+    background: rgba(151, 74, 222, 0.1);
+}
+
+.user-info-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.user-welcome {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+}
+
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #974ade, #714ade);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(151, 74, 222, 0.4);
+}
+
+/* Menú Desplegable */
+.user-dropdown-wrapper {
+    position: relative;
+}
+
+.user-dropdown-menu {
+    display: flex;
+    gap: 0;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 15px;
+    min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    z-index: 1000;
+    padding: 10px 0;
+    margin: 0;
+    list-style: none;
+
+    /* --- ESTADO INICIAL (OCULTO) --- */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(15px);
+    /* Transición suave para el ascenso */
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+.user-dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(10px);
+}
+
+.user-dropdown-menu li {
+    width: 100%;
+}
+.user-dropdown-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    padding: 12px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0;
+    transition: 0.2s;
+}
+
+.user-dropdown-menu li a:hover {
+    background: #252525;
+    color: #974ade;
+}
+
+/* --- ESTADO AL HACER HOVER (ACTIVO) --- */
+.user-dropdown-wrapper:hover .user-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    /* Permite que el mouse interactúe con el menú ahora que es visible */
+    pointer-events: auto; 
+    /* Sube a su posición original (el efecto de ascenso) */
+    transform: translateY(10px); 
+    /* Al entrar, la visibilidad es instantánea (0s de retraso) */
+    transition: 
+        opacity 0.3s ease, 
+        transform 0.3s ease, 
+        visibility 0s linear 0s;
+}
+
+/* PUENTE INVISIBLE: Evita que el menú se cierre si hay un hueco de píxeles */
+.user-dropdown-menu::before {
+    content: "";
+    position: absolute;
+    top: -15px; 
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
+}
+
+.divider {
+    height: 1px;
+    background: #333;
+    margin: 8px 0;
+}
+
+.logout-link:hover {
+    color: #ff4d4d !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 /* =========================================
    ADAPTACIÓN RESPONSIVE (AGREGAR AL FINAL)
    ========================================= */

@@ -68,8 +68,3 @@
     box-shadow: 0 0 20px rgba(151, 74, 222, 0.4);
     transform: scale(1.02);
 }
-
-/* Modificación de la barra de búsqueda para subastas */
-.search-bar i {
-    color: #974ade;
-}

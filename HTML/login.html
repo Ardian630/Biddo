@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container login-container">
-        <a href="javascript:history.back()" class="back-btn">
+        <a href="2inicio.html" class="back-btn">
             <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
 
@@ -40,20 +40,39 @@
 
                 <div class="form-options">
                     <label class="remember-me">
-                        <input type="checkbox"> <span>Recordarme</span>
+                        <input type="checkbox">
+                        <div class="checkmark"></div>
+                        <span class="label-text">Recordarme</span>
                     </label>
                     <a href="#" class="forgot-pass">¿Olvidaste tu contraseña?</a>
                 </div>
 
-                <button type="submit" class="login-submit">Ingresar al Sistema</button>
+                <button type="submit" class="login-submit">Ingresar</button>
             </form>
 
             <div class="login-footer">
-                <p>¿No tienes una cuenta? <a href="#">Regístrate aquí</a></p>
+                <p>¿No tienes una cuenta? <a href="register.html">Regístrate aquí</a></p>
             </div>
         </div>
 
         <div class="glow-effect"></div>
     </div>
+    <script type="module" src="../JS/login.js"></script>
+    <!-- Al final del body de tu register.html o login.html -->
+    <script type="module">
+        import { supabase } from '../JS/supabaseClient.js';
+
+    // Prueba rápida de conexión
+        async function testConnection() {
+            const { data, error } = await supabase.from('usuarios_perfil').select('count');
+            if (error) {
+                console.error('Error al conectar con la tabla Usuario:', error.message);
+            } else {
+                console.log('Conexión verificada. Tabla Usuario accesible.');
+            }
+        }
+
+        testConnection();
+    </script>
 </body>
 </html>

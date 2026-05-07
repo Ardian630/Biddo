@@ -22,6 +22,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
+    width: 100%;
 }
 
 .search-bar {
@@ -32,8 +33,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 380px;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .search-bar input {
@@ -41,7 +41,6 @@
     border: none;
     color: white;
     outline: none;
-    width: 100%;
     font-family: 'Poppins', sans-serif;
 }
 

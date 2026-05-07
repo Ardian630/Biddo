@@ -31,14 +31,13 @@
 /* Caja de Login (Glassmorphism) */
 .login-box {
     background: var(--card-glass);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 50px;
     border-radius: 40px;
     width: 100%;
     max-width: 450px;
     z-index: 2;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
 }
 
 .login-header {
@@ -109,16 +108,80 @@
     font-size: 0.8rem;
 }
 
+/* 1. Contenedor principal: lo convertimos en un flexbox para alinear */
 .remember-me {
     display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
     color: var(--text-dim);
+    font-size: 0.8rem;
+    position: relative;
+    padding-left: 35px; /* Espacio para el nuevo check */
+    user-select: none; /* Evita que se seleccione el texto al hacer click rápido */
+    transition: 0.3s;
+}
+
+.remember-me:hover {
+    color: white; /* Brillo al pasar el mouse por el texto */
+}
+
+/* 2. Ocultamos el checkbox real pero mantenemos su funcionalidad */
+.remember-me input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* 3. Creamos el "falso" checkbox (el fondo) */
+.remember-me .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: rgba(255, 255, 255, 0.05); /* Mismo fondo sutil de los inputs */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+    border-radius: 6px; /* Bordes redondeados estilo Biddo */
+    transition: 0.3s all ease;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.2);
+}
+
+/* 4. Estilo cuando el mouse pasa sobre el check (hover) */
+.remember-me:hover input ~ .checkmark {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(151, 74, 222, 0.5); /* Borde morado sutil */
+}
+
+/* 5. Estilo cuando ESTÁ CHECKED (Cambio de color de fondo) */
+.remember-me input:checked ~ .checkmark {
+    background-color: #974ade;
+    border-color: #974ade;
+}
+
+/* 6. Creamos el indicador (el check blanco de adentro) - oculto por defecto */
+.remember-me .checkmark::after {
+    content: "";
+    position: absolute;
+    display: none; /* Oculto */
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    transition: 0.2s;
+}
+
+/* 7. Mostramos el indicador cuando está checked */
+.remember-me input:checked ~ .checkmark::after {
+    display: block;
 }
 
 .forgot-pass {
-    color: #974ade;
+    color: white;
     text-decoration: none;
 }
 
@@ -138,7 +201,6 @@
 .login-submit:hover {
     background: #af66f0;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(151, 74, 222, 0.3);
 }
 
 .login-footer {
@@ -146,12 +208,17 @@
     margin-top: 30px;
     font-size: 0.85rem;
     color: var(--text-dim);
+
 }
 
 .login-footer a {
-    color: #974ade;
+    color: var(--text-dim);
     text-decoration: none;
     font-weight: 600;
+    transition: .2s;
+}
+.login-footer a:hover{
+    color: #af66f0;
 }
 
 /* Ajuste del brillo para que esté centrado tras la caja */

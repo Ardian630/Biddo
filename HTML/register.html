@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Registro</title>
+    <link rel="stylesheet" href="../CSS/2inicio.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link rel="stylesheet" href="../CSS/register.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container login-container register-page">
+        <a href="login.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
+        <div class="login-box register-box">
+            <div class="login-header">
+                <div class="logo">Biddo<span>.</span></div>
+                <p class="subtitle">Crea tu identidad en la red comercial</p>
+            </div>
+
+            <form class="login-form">
+                <div class="input-group">
+                    <label for="realname">Nombre Real</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="realname" placeholder="Juan Luis Pérez Jiménez" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="email" placeholder="correo@ejemplo.com" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group small">
+                        <label for="doc-type">Tipo</label>
+                        <div class="input-wrapper select-wrapper">
+                            <select id="doc-type" required>
+                                <option value="V">V</option>
+                                <option value="J">J</option>
+                                <option value="E">E</option>
+                                <option value="RIF-J">RIF-J</option>
+                                <option value="RIF-V">RIF-V</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group large">
+                        <label for="doc-num">Número de Documento</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="doc-num" placeholder="12345678" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="birthdate">Fecha de Nacimiento</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <input type="text" id="birthdate" placeholder="dd-mm-yyyy" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit">Crear Cuenta</button>
+            </form>
+
+            <div class="login-footer">
+                <p>¿Ya tienes una cuenta? <a href="login.html">Inicia Sesión</a></p>
+            </div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+    <script type="module" src="../JS/register.js"></script>
+    <script type="module">
+        import { supabase } from '../JS/supabaseClient.js';
+
+    // Prueba rápida de conexión
+        async function testConnection() {
+            const { data, error } = await supabase.from('usuarios_perfil').select('count');
+            if (error) {
+                console.error('Error al conectar con la tabla Usuario:', error.message);
+            } else {
+                console.log('Conexión verificada. Tabla Usuario accesible.');
+            }
+        }
+
+        testConnection();
+    </script>
+</body>
+</html>
