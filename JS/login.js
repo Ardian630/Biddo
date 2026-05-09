@@ -30,9 +30,6 @@ if (loginForm) {
                 .eq('autenticacion_id', data.user.id);
 
             if (updateError) console.warn("No se pudo actualizar la última sesión:", updateError.message);
-
-            // 3. Éxito: Redirigir al panel principal o inicio[cite: 2]
-            alert("¡Bienvenido de nuevo a Biddo!");
             window.location.href = '../HTML/mimonedero.html'; // Ajusta la ruta según tu estructura
 
         } catch (error) {

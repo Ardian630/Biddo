@@ -340,9 +340,6 @@ p { color: var(--text-muted); line-height: 1.6; }
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-/* =========================================
-   ADAPTACIÓN RESPONSIVE (AGREGAR AL FINAL)
-   ========================================= */
 
 @media (max-width: 1024px) {
     /* En tablets, apilamos el texto y la tarjeta */

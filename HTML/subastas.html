@@ -13,15 +13,41 @@
 <body>
     <div class="container">
         <nav>
-            <div class="logo">Biddo<span>.</span></div>
+            <div class="logo">Biddo<span class="Biddo-Dot">.</span></div>
+    
+            <!-- Mantenemos tus opciones intactas -->
             <ul>
                 <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
                 <li><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
                 <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
-                <li><a href="" class="anchors active">Subasta</a></li>
+                <li><a href="../HTML/subastas.html" class="anchors active">Subasta</a></li>
             </ul>
-            <div class="nav-Btns">
-                <button class="btn-contact">Iniciar Sesión</button>
+        
+            <!-- Nuevo contenedor de autenticación dinámica -->
+            <div class="nav-auth-container">
+                <!-- Se muestra por defecto si no hay sesión -->
+                <button class="btn-contact" id="btn-login-ui">Iniciar Sesión</button>
+            
+                <!-- Se muestra solo si el usuario está logueado -->
+                <div id="user-menu" class="user-dropdown-wrapper" style="display: none;">
+                    <div class="user-profile-trigger">
+                        <div class="user-info-text">
+                            <span class="user-welcome">Hola,</span>
+                            <span id="user-name-label" class="user-name">Cargando...</span>
+                        </div>
+                        <div class="avatar-circle">
+                            <!--<i class="fa-solid fa-user"></i>-->
+                        </div>
+                    </div>
+                    
+                    <!-- Menú desplegable -->
+                    <ul class="user-dropdown-menu">
+                        <li><a href="perfil.html">Mi Perfil</a></li>
+                        <li><a href="ajustes.html">Ajustes</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" id="btn-logout" class="logout-link">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
         <h1>Panel de Subastas</h1>
@@ -105,7 +131,7 @@
 
         </main>
     </div>
-
+    <script type="module" src="../JS/auth-header.js"></script>
     <script>
         function moveSlider(button, direction) {
             const wrapper = button.parentElement;
