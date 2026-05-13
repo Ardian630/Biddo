@@ -55,11 +55,11 @@
             <section class="balance-main">
                 <div class="balance-contain">
                     <span class="label">Saldo disponible ⓘ</span>
-                    <h2 id="total-balance">1,250.00 <span>BDC</span></h2>
+                    <h2 id="btc-disponibles">0.00 <span class="bdc_unity">BDC</span></h2>
                 </div>
                 <div class="balance-contain">
                     <span class="label">Saldo Retenido ⓘ</span>
-                    <h2 id="reteined-balance">250.00 <span>BDC</span></h2>
+                    <h2 id="btc-retenido">0.00 <span class="bdc_unity">BDC</span></h2>
                 </div>
             </section>
             
@@ -71,15 +71,15 @@
                                 <span class="brand">Biddo<b>.</b></span>
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="MC" width="45">
                             </div>
-                            <div class="card-number" id="card-num">•••• •••• •••• 3294</div>
+                            <div class="card-number" id="tarjeta-numero">•••• •••• •••• 3294</div>
                             <div class="card-bottom">
                                 <div class="info">
                                     <span class="label">Titular</span>
-                                    <span class="val">Nathalia Maita</span>
+                                    <span class="val" id="tarjeta-titular">Cargando...</span>
                                 </div>
                                 <div class="info">
                                     <span class="label">Fecha Exp.</span>
-                                    <span class="val" id="card-exp">••/••</span>
+                                    <span class="val" id="tarjeta-fecha">••/••</span>
                                 </div>
                                 <button class="btn-reveal" onclick="toggleCardInfo()">Ver Datos</button>
                             </div>
@@ -144,23 +144,12 @@
         </section>
     </div>
     <script type="module" src="../JS/auth-header.js"></script>
+    <script type="module" src="../JS/mimonedero.js"></script>
     <script>
         let hidden = true;
         function toggleCardInfo() {
-            const num = document.getElementById('card-num');
-            const exp = document.getElementById('card-exp');
-            const btn = document.querySelector('.btn-reveal');
-            
-            if(hidden) {
-                num.innerText = "5337 8622 4901 3294";
-                exp.innerText = "08/28";
-                btn.innerText = "Ocultar";
-            } else {
-                num.innerText = "•••• •••• •••• 3294";
-                exp.innerText = "••/••";
-                btn.innerText = "Ver Datos";
-            }
-            hidden = !hidden;
+        // Esta función ahora solo dispara un evento que escucharemos en mimonedero.js
+            window.dispatchEvent(new CustomEvent('toggle-tarjeta'));
         }
     </script>
 </body>

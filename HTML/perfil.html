@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Mi Perfil</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Ajuste para que el formulario sea de dos columnas en pantallas grandes */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+        .login-box { max-width: 700px; } /* Un poco más ancho para las dos columnas */
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <a href="2inicio.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo">Mi Perfil<span>.</span></div>
+                <p class="subtitle">Actualiza tu información personal</p>
+            </div>
+
+            <form id="form-perfil" class="login-form">
+                <div class="profile-grid">
+                    <div class="form-column">
+                        <div class="input-group">
+                            <label for="nombre_usuario">Nombre de Usuario</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="nombre_usuario" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="email">Correo Electrónico</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-envelope"></i>
+                                <input type="email" id="email" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-column">
+                        <div class="input-group">
+                            <label for="nombre_completo">Nombre Completo</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-id-card"></i>
+                                <input type="text" id="nombre_completo" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-calendar"></i>
+                                <input type="date" id="fecha_nacimiento" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit">Guardar Cambios</button>
+            </form>
+
+            <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.9rem;"></div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+    <script type="module" src="../JS/perfil.js"></script>
+</body>
+</html>

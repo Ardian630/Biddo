@@ -1,0 +1,133 @@
+/* perfil.css */
+.profile-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    position: relative;
+    z-index: 2;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 800px;
+    z-index: 3;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.profile-header p {
+    color: var(--text-muted);
+}
+
+.glass-form {
+    background: var(--card-glass);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.form-section h3 {
+    font-size: 1.1rem;
+    color: #974ade;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.input-group input, 
+.input-group select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 15px;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    transition: 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #974ade;
+    outline: none;
+    background: rgba(151, 74, 222, 0.1);
+}
+
+.row {
+    display: flex;
+    gap: 15px;
+}
+
+.half { flex: 1; }
+
+.btn-save {
+    background: #974ade;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.btn-save:hover {
+    background: #714ade;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(151, 74, 222, 0.4);
+}
+
+.status-msg {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .glass-form {
+        padding: 25px;
+    }
+
+    .profile-header h2 {
+        font-size: 1.8rem;
+    }
+}

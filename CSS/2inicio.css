@@ -341,6 +341,13 @@ p { color: var(--text-muted); line-height: 1.6; }
     to { opacity: 1; transform: translateY(0); }
 }
 
+#nav-monedero {
+    display: none;
+}
+/* =========================================
+   ADAPTACIÓN RESPONSIVE (AGREGAR AL FINAL)
+   ========================================= */
+
 @media (max-width: 1024px) {
     /* En tablets, apilamos el texto y la tarjeta */
     .hero {
@@ -408,7 +415,7 @@ p { color: var(--text-muted); line-height: 1.6; }
     .features-grid {
         grid-template-columns: 1fr;
         gap: 15px;
-    }
+    } 
 }
 
 @media (max-width: 480px) {

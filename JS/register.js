@@ -1,81 +1,147 @@
 import { supabase } from './supabaseClient.js';
 
-// Seleccionamos el formulario de registro
+// --- 1. ALGORITMO DE GENERACIÓN DE TARJETA (Luhn) ---
+function generarNumeroTarjetaValido() {
+    let numero = "5337"; // Prefijo (Mastercard)
+    for (let i = 0; i < 11; i++) {
+        numero += Math.floor(Math.random() * 10);
+    }
+    
+    // Dígito de control
+    let sum = 0;
+    for (let i = 0; i < numero.length; i++) {
+        let digit = parseInt(numero[i]);
+        if (i % 2 === 0) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+        }
+        sum += digit;
+    }
+    let checkDigit = (10 - (sum % 10)) % 10;
+    return numero + checkDigit;
+}
+
+// Genera una cadena aleatoria (ej: hacsxai, biddox12, etc.)
+function generarSufijoAleatorio(longitud = 6) {
+    const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let resultado = '';
+    for (let i = 0; i < longitud; i++) {
+        resultado += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    }
+    return resultado;
+}
+
+// Genera el username y verifica en la base de datos que no exista
+async function obtenerUsernameUnico() {
+    let esUnico = false;
+    let usernameGenerado = "";
+    let intentos = 0;
+    const maxIntentos = 10;
+
+    while (!esUnico && intentos < maxIntentos) {
+        intentos++;
+        // Generamos un nombre estilo 'user_a1b2c3'
+        usernameGenerado = `user_${generarSufijoAleatorio()}`;
+        
+        console.log(`Validando disponibilidad de: ${usernameGenerado}`);
+
+        // CAMBIO: Ahora buscamos en la tabla 'autenticacion'
+        const { data, error } = await supabase
+            .from('autenticacion')
+            .select('nombre_usuario')
+            .eq('nombre_usuario', usernameGenerado)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Error de base de datos:", error.message);
+            throw new Error("Error al conectar con la tabla de autenticación.");
+        }
+
+        // Si data es null, significa que el nombre está libre
+        if (!data) {
+            esUnico = true; 
+        }
+    }
+
+    if (!esUnico) {
+        throw new Error("No se pudo generar un nombre de usuario único. Intenta de nuevo.");
+    }
+
+    return usernameGenerado;
+}
+
+// --- 2. VERIFICACIÓN DE UNICIDAD ---
+async function obtenerNumeroUnico() {
+    let esUnico = false;
+    let num;
+    while (!esUnico) {
+        num = generarNumeroTarjetaValido();
+        const { data } = await supabase.from('tarjetas').select('numero_tarjeta').eq('numero_tarjeta', num).maybeSingle();
+        if (!data) esUnico = true;
+    }
+    return num;
+}
+
 const registerForm = document.querySelector('.login-form');
 
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
-        // 1. Detenemos el refresco de la página inmediatamente
         e.preventDefault();
-        
-        console.log("Iniciando proceso de registro atómico...");
 
-        // 2. Captura de datos desde los IDs de register_2.html
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const nombreReal = document.getElementById('realname').value;
         const tipoDoc = document.getElementById('doc-type').value;
         const numDoc = document.getElementById('doc-num').value;
-        const fechaTexto = document.getElementById('birthdate').value; // Formato esperado: dd-mm-yyyy
+        const fechaTexto = document.getElementById('birthdate').value;
 
         try {
-            // --- TRANSFORMACIÓN DE FECHA (Opción 1) ---
-            // Convierte "dd-mm-yyyy" a "yyyy-mm-dd" para PostgreSQL[cite: 2]
-            const partes = fechaTexto.split('-');
-            if (partes.length !== 3) {
-                throw new Error("El formato de fecha debe ser dd-mm-yyyy (ej: 25-12-1995)");
-            }
-            const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
+    // 1. Preparar datos automáticos
+    const hoy = new Date();
+    const fechaExp = `${String(hoy.getMonth() + 1).padStart(2, '0')}/${String(hoy.getFullYear() + 5).slice(-2)}`;
+    
+    // --- NUEVO: Generar Username Único ---
+    const usernameUnico = await obtenerUsernameUnico();
+    
+    // 2. Generar número de tarjeta único
+    const numeroTarjeta = await obtenerNumeroUnico();
 
-            // Algoritmo para generar un nombre de usuario aleatorio[cite: 2]
-            const generatedUsername = `usuario_${Math.random().toString(36).substring(2, 7)}`;
+    // 3. Formatear fecha de nacimiento
+    const partes = fechaTexto.split('-');
+    const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
 
-            // --- PASO 1: Registro en Supabase Auth ---
-            // Esto crea la cuenta técnica necesaria para el login[cite: 2]
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email,
-                password
-            });
+    // 4. Crear el usuario en Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+    });
 
-            if (authError) throw authError;
+    if (authError) throw authError;
 
-            // Obtenemos el UUID generado por Supabase[cite: 2]
-            const uuid = authData.user.id;
+    const userUUID = authData.user.id; 
 
-            // --- PASO 2: Ejecución de la Transacción Atómica (RPC) ---
-            // Llamamos a la función SQL que inserta en 'autenticacion' y 'usuarios_perfil' al mismo tiempo[cite: 2]
-            const { error: transactionError } = await supabase.rpc('registrar_usuario_transaccional', {
-                p_uuid: uuid,
-                p_email: email,
-                p_password: "PROTECTED", // La contraseña real ya está segura en auth.users[cite: 2]
-                p_username: generatedUsername,
-                p_nombre_completo: nombreReal,
-                p_tipo_doc: tipoDoc,
-                p_num_doc: numDoc,
-                p_fecha_nac: fechaISO
-            });
+    // 5. Llamar al RPC con el username generado
+    const { error: rpcError } = await supabase.rpc('registrar_usuario_completo', {
+    p_uuid: userUUID,
+    p_email: email,
+    p_password: password, 
+    p_username: usernameUnico, // El nombre generado como 'user_hacsxai'
+    p_nombre_completo: nombreReal,
+    p_tipo_doc: tipoDoc,
+    p_num_doc: numDoc,
+    p_fecha_nac: fechaISO,
+    p_numero_tarjeta: numeroTarjeta,
+    p_fecha_exp: fechaExp
+    });
 
-            // Si la transacción falla, lanzamos el error para el catch[cite: 2]
-            if (transactionError) throw transactionError;
+    if (rpcError) throw rpcError;
 
-            // --- ÉXITO ---
-            alert(`✅ ¡Registro Exitoso!\nBienvenido, ${generatedUsername}.\nYa puedes iniciar sesión.`);
-            window.location.href = 'login.html';
+    alert(`✅ ¡Cuenta creada! Tu nombre de usuario es: ${usernameUnico}`);
+    window.location.href = 'login.html';
 
-        } catch (error) {
-            // Captura y muestra cualquier error en un pop-up[cite: 2]
-            console.error("Detalle del error de registro:", error);
-            
-            let mensajeError = error.message;
-            
-            // Manejo amigable de errores comunes
-            if (mensajeError.includes("rate limit")) {
-                mensajeError = "Demasiados intentos. Por favor, espera un momento o desactiva la confirmación de email.";
-            } else if (mensajeError.includes("PGRST203")) {
-                mensajeError = "Error de duplicidad en la función de base de datos. Asegúrate de haber ejecutado el DROP FUNCTION.";
-            }
-
-            alert(`❌ Error en el registro:\n${mensajeError}`);
-        }
+} catch (error) {
+    console.error("Error:", error.message);
+    alert(`Error: ${error.message}`);
+}
     });
 }

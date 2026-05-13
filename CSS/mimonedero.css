@@ -100,7 +100,7 @@ main{
     font-size: 2.5rem;
     margin: 5px 0;
 }
-.balance-main h2 span {
+.balance-main h2 .bdc_unity {
     color: #974ade;
     font-size: 1.2rem;
 }
