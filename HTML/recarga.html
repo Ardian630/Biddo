@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Recargar Fondos</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-box { max-width: 550px; padding: 35px; }
+        .banco-info-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin: 20px 0;
+        }
+        .banco-info-title {
+            color: var(--accent-purple, #974ade);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .banco-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+        .banco-detail span strong { color: #fff; }
+        .calc-preview {
+            font-size: 0.8rem;
+            color: var(--neon-green, #4ade80);
+            margin-top: 5px;
+            margin-left: 5px;
+            display: block;
+        }
+        .calc-comision { color: var(--error-red, #f87171); }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <a href="mimonedero.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Monedero
+        </a>
+
+        <div class="login-box glass-form">
+            <div class="login-header">
+                <h2>Recargar BDC</h2>
+                <p>Ingresa el monto que deseas recargar utilizando Pago Móvil</p>
+            </div>
+
+            <form id="form-recarga">
+                <!-- Busca tu bloque del formulario (<form id="form-recarga">) y reemplaza la sección de inputs por esta: -->
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label for="input-bdc">Monto en BDC</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-coins"></i>
+                            <input type="number" id="input-bdc" step="0.01" placeholder="0.00" min="1">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="input-bs">Equivalente en Bs</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <input type="number" id="input-bs" step="0.01" placeholder="0.00" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="banco-info-container">
+                    <div class="banco-info-title"><i class="fa-solid fa-university"></i> Datos de Pago Biddo</div>
+                    <div class="banco-detail">
+                        <span>Banco:</span>
+                        <span><strong>Banco Mercantil (0105)</strong></span>
+                    </div>
+                    <div class="banco-detail">
+                        <span>Teléfono:</span>
+                        <span><strong>0424-9299381</strong></span>
+                    </div>
+                    <div class="banco-detail">
+                        <span>Cédula / RIF:</span>
+                        <span><strong>V-31.490.978</strong></span>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="referencia">Referencia del Pago</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-receipt"></i>
+                        <input type="text" id="referencia" placeholder="Introduce los últimos 6 u 8 dígitos" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit" id="btn-submit-recarga">Enviar Solicitud de Recarga</button>
+            </form>
+
+            <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.95rem; padding: 10px; border-radius: 8px;"></div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+
+    <script type="module" src="../JS/recarga.js"></script>
+</body>
+</html>

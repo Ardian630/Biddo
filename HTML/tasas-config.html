@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Configuración de Tasas</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-box { max-width: 650px; padding: 35px; margin-top: 20px; }
+        .form-section-title {
+            color: var(--accent-purple, #974ade);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 5px;
+        }
+        .calc-preview-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .calc-value { color: var(--neon-green, #4ade80); font-weight: 600; }
+        .input-wrapper span.unit-badge {
+            position: absolute;
+            right: 15px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        .input-wrapper input { padding-right: 45px; }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <a href="2inicio.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+        </a>
+
+        <div class="login-box glass-form">
+            <div class="login-header">
+                <h2>Panel de Tasas y Comisiones</h2>
+                <p>Establece los márgenes algorítmicos y comisiones globales del ecosistema</p>
+            </div>
+
+            <form id="form-tasas">
+                
+                <div class="form-section-title"><i class="fa-solid fa-coins"></i> Configuración de Tasa Base</div>
+                
+                <div class="input-group">
+                    <label for="tasa-referencia">Valor de Referencia Global (BCV / Mercado)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-money-bill-transfer"></i>
+                        <input type="number" id="tasa-referencia" step="0.01" placeholder="0.00" required min="0.01">
+                        <span class="unit-badge">Bs</span>
+                    </div>
+                </div>
+
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label for="margen-compra">Margen sobre Referencia (Compra)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <input type="number" id="margen-compra" step="0.01" placeholder="5.00" value="0.00" min="0">
+                            <span class="unit-badge">%</span>
+                        </div>
+                        <div class="calc-preview-box">
+                            <span>Tasa Compra:</span>
+                            <span class="calc-value" id="preview-compra">0.00 Bs</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="margen-venta">Margen bajo Referencia (Venta)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-arrow-trend-down"></i>
+                            <input type="number" id="margen-venta" step="0.01" placeholder="5.00" value="0.00" min="0">
+                            <span class="unit-badge">%</span>
+                        </div>
+                        <div class="calc-preview-box">
+                            <span>Tasa Venta:</span>
+                            <span class="calc-value" id="preview-venta">0.00 Bs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section-title"><i class="fa-solid fa-percent"></i> Comisiones Operacionales</div>
+
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px;">
+                    <div class="input-group">
+                        <label for="comision-transferencia">Comisión por Transferencia</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <input type="number" id="comision-transferencia" step="0.01" placeholder="1.50" value="0.00" min="0">
+                            <span class="unit-badge">%</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="comision-retiro">Comisión por Retiro</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-bank"></i>
+                            <input type="number" id="comision-retiro" step="0.01" placeholder="2.00" value="0.00" min="0">
+                            <span class="unit-badge">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+                    <div class="input-group">
+                        <label for="venta-fija">Comisión Fija de Venta</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-tag"></i>
+                            <input type="number" id="venta-fija" step="0.01" placeholder="2.00" value="0.00" min="0">
+                            <span class="unit-badge">Bs</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="venta-porcentual">Comisión Porcentual de Venta</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-percent"></i>
+                            <input type="number" id="venta-porcentual" step="0.01" placeholder="5.00" value="0.00" min="0">
+                            <span class="unit-badge">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit" id="btn-submit-tasas">Actualizar Configuración de Tasas</button>
+            </form>
+
+            <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.95rem; padding: 10px; border-radius: 8px;"></div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+
+    <script type="module" src="../JS/tasas-config.js"></script>
+</body>
+</html>

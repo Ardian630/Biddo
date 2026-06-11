@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Operaciones Pendientes</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/mercado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .admin-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 15px;
+        }
+        .admin-header h2 {
+            font-size: 2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .admin-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .ops-table-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .ops-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .ops-table th, .ops-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .ops-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--accent-purple, #974ade);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .ops-table tr:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .badge-pending {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--wait-orange, #fbbf24);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+        .btn-action-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-admin {
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+        .btn-approve {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--neon-green, #4ade80);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+        .btn-approve:hover {
+            background: var(--neon-green, #4ade80);
+            color: #000;
+            box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+        }
+        .btn-reject {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--error-red, #f87171);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+        .btn-reject:hover {
+            background: var(--error-red, #f87171);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container admin-container">
+        
+        <a href="2inicio.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Volver al menú principal
+        </a>
+
+        <header class="admin-header">
+            <h2>Módulo de Operaciones Pendientes</h2>
+            <p>Monitorea, valida y concilia los flujos transaccionales entrantes de la plataforma</p>
+        </header>
+
+        <div id="alert-banner" style="display: none; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem; text-align: center;"></div>
+
+        <div class="ops-table-wrapper">
+            <table class="ops-table">
+                <thead>
+                    <tr>
+                        <th>Fecha de Solicitud</th>
+                        <th>Referencia Interna</th>
+                        <th>Referencia Banco</th>
+                        <th>Monto (BDC)</th>
+                        <th>Equivalente (Bs)</th>
+                        <th>Estado</th>
+                        <th>Acciones Administrativas</th>
+                    </tr>
+                </thead>
+                <tbody id="ops-tbody">
+                    <tr>
+                        <td colspan="7" class="no-data">Cargando flujo de transacciones en proceso...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="../JS/operaciones-pendientes.js"></script>
+</body>
+</html>

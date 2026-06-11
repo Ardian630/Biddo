@@ -35,6 +35,7 @@
                         </div>
                         <div class="avatar-circle">
                             <!--<i class="fa-solid fa-user"></i>-->
+                            <img id="user-avatar-nav" src="../assets/img/user1.jpeg" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                         </div>
                     </div>
                     
@@ -91,19 +92,19 @@
         </main>
 
         <section class="actions">
-            <button class="action-btn">
+            <button class="action-btn" id="btn-ir-recarga">
                 <div class="icon-circle">
                     <i class="fa-solid fa-circle-arrow-down"></i>
                 </div>
                 <span>Recargar</span>
             </button>
-            <button class="action-btn">
+            <button class="action-btn" id="btn-ir-transferir">
                 <div class="icon-circle">
                     <i class="fa-solid fa-paper-plane"></i>
                 </div>
                 <span>Transferir</span>
             </button>
-            <button class="action-btn">
+            <button class="action-btn" id="btn-ir-retiro">
                 <div class="icon-circle">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
@@ -112,34 +113,9 @@
         </section>
 
         <section class="history">
-            <h3>Historial de Movimientos</h3>
-            <div class="history-list">
-                <div class="transaction success">
-                    <div class="t-icon"><i class="fa-solid fa-check"></i></div>
-                    <div class="t-info">
-                        <span class="t-type">Recarga Bidcoins</span>
-                        <span class="t-date">22 Abr 2026 - 10:15</span>
-                    </div>
-                    <div class="t-amount">+ 500.00 BDC</div>
-                </div>
-
-                <div class="transaction failed">
-                    <div class="t-icon"><i class="fa-solid fa-xmark"></i></div>
-                    <div class="t-info">
-                        <span class="t-type">Transferencia enviada</span>
-                        <span class="t-date">21 Abr 2026 - 14:20</span>
-                    </div>
-                    <div class="t-amount">- 120.00 BDC</div>
-                </div>
-
-                <div class="transaction pending">
-                    <div class="t-icon"><i class="fa-solid fa-clock"></i></div>
-                    <div class="t-info">
-                        <span class="t-type">Retiro a Banco Exterior</span>
-                        <span class="t-date">Hoy - En espera</span>
-                    </div>
-                    <div class="t-amount">- 300.00 BDC</div>
-                </div>
+            <h2>Movimientos</h2>
+    
+            <div class="transactions-list">
             </div>
         </section>
     </div>

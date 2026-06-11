@@ -13,11 +13,15 @@
             <div class="logo">Biddo<span class="Biddo-Dot">.</span></div>
     
             <!-- Mantenemos tus opciones intactas -->
+            <!-- Busca tu sección de <ul> en el nav y déjala estructurada así: -->
             <ul>
                 <li><a href="#user-name-label" class="anchors active">Inicio</a></li>
                 <li id="nav-monedero"><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
-                <li><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
-                <li><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <!-- Añadimos IDs a Mercado y Subasta -->
+                <li id="nav-mercado"><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
+                <li id="nav-subastas"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <!-- Contenedor vacío donde inyectaremos dinámicamente "Operaciones Pendientes" si es admin/moderador -->
+                <li id="nav-admin-ops" style="display: none;"></li>
             </ul>
         
             <!-- Nuevo contenedor de autenticación dinámica -->
@@ -34,6 +38,7 @@
                         </div>
                         <div class="avatar-circle">
                             <!--<i class="fa-solid fa-user"></i>-->
+                            <img id="user-avatar-nav" src="../assets/img/user1.jpeg" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                         </div>
                     </div>
                     

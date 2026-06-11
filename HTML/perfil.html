@@ -34,44 +34,77 @@
             </div>
 
             <form id="form-perfil" class="login-form">
-                <div class="profile-grid">
-                    <div class="form-column">
-                        <div class="input-group">
-                            <label for="nombre_usuario">Nombre de Usuario</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-user"></i>
-                                <input type="text" id="nombre_usuario" required>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="email">Correo Electrónico</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-envelope"></i>
-                                <input type="email" id="email" required>
-                            </div>
-                        </div>
-                    </div>
+    <div class="avatar-section" style="text-align: center; margin-bottom: 25px;">
+        <div class="avatar-wrapper" style="position: relative; display: inline-block;">
+            <img id="avatar-preview" src="https://via.placeholder.com/150" alt="Avatar" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #974ade;">
+            <label for="input-avatar" style="position: absolute; bottom: 0; right: 0; background: #974ade; color: white; padding: 8px; border-radius: 50%; cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-camera"></i>
+            </label>
+            <input type="file" id="input-avatar" accept="image/*" style="display: none;">
+        </div>
+        <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Sube tu foto de perfil</p>
+    </div>
 
-                    <div class="form-column">
-                        <div class="input-group">
-                            <label for="nombre_completo">Nombre Completo</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-id-card"></i>
-                                <input type="text" id="nombre_completo" required>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                            <div class="input-wrapper">
-                                <i class="fa-solid fa-calendar"></i>
-                                <input type="date" id="fecha_nacimiento" required>
-                            </div>
-                        </div>
-                    </div>
+    <div class="profile-grid">
+        <div class="form-column">
+            <div class="input-group">
+                <label for="nombre_usuario">Nombre de Usuario</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="nombre_usuario" required>
                 </div>
+            </div>
+            <div class="input-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="telefono">Teléfono</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="text" id="telefono">
+                </div>
+            </div>
+        </div>
 
-                <button type="submit" class="login-submit">Guardar Cambios</button>
-            </form>
+        <div class="form-column">
+            <div class="input-group">
+                <label for="nombre_completo">Nombre Completo</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="nombre_completo" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calendar"></i>
+                    <input type="date" id="fecha_nacimiento" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="pasaporte">Pasaporte / ID</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-passport"></i>
+                    <input type="text" id="pasaporte">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group" style="margin-top: 15px;">
+        <label for="direccion_usuario">Dirección de Habitación</label>
+        <div class="input-wrapper">
+            <i class="fa-solid fa-location-dot"></i>
+            <input type="text" id="direccion_usuario">
+        </div>
+    </div>
+
+    <button type="submit" class="login-submit">Guardar Cambios</button>
+</form>
 
             <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.9rem;"></div>
         </div>
