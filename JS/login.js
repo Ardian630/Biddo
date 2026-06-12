@@ -1,20 +1,56 @@
 import { supabase } from './supabaseClient.js';
 
-// Seleccionamos el formulario de inicio de sesión
 const loginForm = document.querySelector('.login-form');
+const mensajeStatus = document.getElementById('mensaje-status');
+const btnLogin = document.getElementById('btn-login');
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function mostrarMensaje(texto, color) {
+    if (mensajeStatus) {
+        mensajeStatus.textContent = texto;
+        mensajeStatus.style.color = color;
+    } else {
+        alert(texto);
+    }
+}
+
+function validarLogin(email, password) {
+    if (!email) {
+        return '❌ Ingresa tu correo electrónico.';
+    }
+    if (!EMAIL_REGEX.test(email)) {
+        return '❌ El formato del correo electrónico no es válido.';
+    }
+    if (!password) {
+        return '❌ Ingresa tu contraseña.';
+    }
+    if (password.length < 6) {
+        return '❌ La contraseña debe tener al menos 6 caracteres.';
+    }
+    return null;
+}
 
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
-        // Detener el refresco de la página[cite: 2]
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim().toLowerCase();
         const password = document.getElementById('password').value;
 
-        try {
-            console.log("Intentando iniciar sesión...");
+        const errorValidacion = validarLogin(email, password);
+        if (errorValidacion) {
+            mostrarMensaje(errorValidacion, '#f87171');
+            return;
+        }
 
-            // 1. Autenticación con Supabase Auth
+        mostrarMensaje('', '');
+        if (btnLogin) {
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Ingresando...';
+        }
+
+        try {
             const { data, error: authError } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password,
@@ -22,28 +58,34 @@ if (loginForm) {
 
             if (authError) throw authError;
 
-            // 2. Si el login es exitoso, actualizamos la última sesión en tu tabla[cite: 1]
-            // Esto es opcional pero útil para el campo 'ultima_sesion' que mencionaste antes
             const { error: updateError } = await supabase
                 .from('autenticacion')
                 .update({ ultima_sesion: new Date().toISOString() })
                 .eq('autenticacion_id', data.user.id);
 
             if (updateError) console.warn("No se pudo actualizar la última sesión:", updateError.message);
-            window.location.href = '../HTML/mimonedero.html'; // Ajusta la ruta según tu estructura
+
+            mostrarMensaje('✅ Inicio de sesión exitoso. Redirigiendo...', '#4ade80');
+            window.location.href = '../HTML/mimonedero.html';
 
         } catch (error) {
             console.error("Error de login:", error.message);
-            
-            // Manejo de errores comunes para el usuario
+
             let mensajeAmigable = error.message;
             if (error.message.includes("Invalid login credentials")) {
                 mensajeAmigable = "Correo o contraseña incorrectos.";
             } else if (error.message.includes("Email not confirmed")) {
                 mensajeAmigable = "Por favor, verifica tu correo electrónico antes de entrar.";
+            } else if (error.message.includes("Too many requests")) {
+                mensajeAmigable = "Demasiados intentos. Espera un momento e intenta de nuevo.";
             }
 
-            alert(`Error: ${mensajeAmigable}`);
+            mostrarMensaje(`❌ ${mensajeAmigable}`, '#f87171');
+
+            if (btnLogin) {
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Ingresar';
+            }
         }
     });
 }

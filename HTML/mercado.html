@@ -14,20 +14,17 @@
         <nav>
             <div class="logo">Biddo<span class="Biddo-Dot">.</span></div>
     
-            <!-- Mantenemos tus opciones intactas -->
             <ul>
                 <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
-                <li><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
-                <li><a href="" class="anchors active">Mercado</a></li>
-                <li><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <li id="nav-monedero"><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
+                <li id="nav-mercado"><a href="" class="anchors active">Mercado</a></li>
+                <li id="nav-subastas"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <li id="nav-admin-ops" style="display: none;"></li>
             </ul>
         
-            <!-- Nuevo contenedor de autenticación dinámica -->
             <div class="nav-auth-container">
-                <!-- Se muestra por defecto si no hay sesión -->
                 <button class="btn-contact" id="btn-login-ui">Iniciar Sesión</button>
             
-                <!-- Se muestra solo si el usuario está logueado -->
                 <div id="user-menu" class="user-dropdown-wrapper" style="display: none;">
                     <div class="user-profile-trigger">
                         <div class="user-info-text">
@@ -35,12 +32,10 @@
                             <span id="user-name-label" class="user-name">Cargando...</span>
                         </div>
                         <div class="avatar-circle">
-                            <!--<i class="fa-solid fa-user"></i>-->
                             <img id="user-avatar-nav" src="../assets/img/user1.jpeg" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
                         </div>
                     </div>
                     
-                    <!-- Menú desplegable -->
                     <ul class="user-dropdown-menu">
                         <li><a href="perfil.html">Mi Perfil</a></li>
                         <li><a href="ajustes.html">Ajustes</a></li>
@@ -52,172 +47,17 @@
         </nav>
         <h1>Explorar Mercado</h1>
         <header class="market-header">
-
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar productos...">
+                <input type="text" id="search-productos" placeholder="Buscar productos...">
             </div>
         </header>
 
-        <main class="market-content">
-            
-            <section class="category-section">
-                <h2 class="category-title">Sugerencias</h2>
-                <div class="slider-wrapper">
-                    <button class="nav-prev" onclick="moveSlider(this, -1)"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-next" onclick="moveSlider(this, 1)"><i class="fa-solid fa-chevron-right"></i></button>
-                    
-                    <div class="product-slider">
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img5.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user2.jpeg" alt="Vendedor">
-                                        <i class="fa-solid fa-circle-check verified-badge"></i>
-                                    </div>
-                                    <span class="seller-name">NIKE Venezuela</span>
-                                </div>
-                                <h3 class="product-title">Zapatillas Air Force 1</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">700.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img1.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
-                                    </div>
-                                    <span class="seller-name">Pedro_Ventas</span>
-                                </div>
-                                <h3 class="product-title">Franelas Oversize Estampadas</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">80.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img4.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
-                                    </div>
-                                    <span class="seller-name">Pedro_Ventas</span>
-                                </div>
-                                <h3 class="product-title">Silla Gamer Ergonómica</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">750.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img6.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
-                                    </div>
-                                    <span class="seller-name">Rafranu</span>
-                                </div>
-                                <h3 class="product-title">Crema hidratante Cerave</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">80.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img8.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
-                                    </div>
-                                    <span class="seller-name">gabrielM10</span>
-                                </div>
-                                <h3 class="product-title">Resident Evil Requiem PS5</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">350.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-
-                        </div>
-                </div>
-            </section>
-
-            <section class="category-section">
-                <h2 class="category-title">Electrónica</h2>
-                <div class="slider-wrapper">
-                    <button class="nav-prev" onclick="moveSlider(this, -1)"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-next" onclick="moveSlider(this, 1)"><i class="fa-solid fa-chevron-right"></i></button>
-                    
-                    <div class="product-slider">
-                        <article class="product-card">
-                            <div class="image-container">
-                                <img src="../assets/img/img2.jpeg" alt="Producto" class="product-img">
-                                <button class="save-btn"><i class="fa-regular fa-heart"></i></button>
-                            </div>
-                            <div class="product-details">
-                                <div class="seller-info">
-                                    <div class="seller-avatar">
-                                        <img src="../assets/img/user1.jpeg" alt="Vendedor">
-                                        <i class="fa-solid fa-circle-check verified-badge"></i>
-                                    </div>
-                                    <span class="seller-name">ElectroWorld</span>
-                                </div>
-                                <h3 class="product-title">Audífonos Gamer RGB Ultra</h3>
-                                <div class="price-action">
-                                    <div class="price-tag">850.00 <span>BDC</span></div>
-                                    <button class="detail-btn">Ver detalle</button>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
+        <main class="market-content" id="market-content">
+            <p style="text-align:center;color:#94a3b8;padding:40px;">Cargando productos...</p>
         </main>
     </div>
     <script type="module" src="../JS/auth-header.js"></script>
-    <script>
-        function moveSlider(button, direction) {
-            const wrapper = button.parentElement;
-            const slider = wrapper.querySelector('.product-slider');
-            const scrollAmount = 330; // Ancho tarjeta + gap
-            
-            slider.scrollBy({
-                left: direction * scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-    </script>
+    <script type="module" src="../JS/mercado.js"></script>
 </body>
 </html>

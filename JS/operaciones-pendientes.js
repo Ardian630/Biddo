@@ -15,19 +15,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (authError) {
         console.error("❌ Fallo al obtener la sesión de Supabase:", authError.message);
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data">❌ Error de autenticación: ${authError.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Error de autenticación: ${authError.message}</td></tr>`;
         return;
     }
 
     if (!session) {
         console.warn("⚠️ No hay una sesión activa. Redireccionando a login.html");
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data">⚠️ Sesión expirada. Redirigiendo...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">⚠️ Sesión expirada. Redirigiendo...</td></tr>`;
         setTimeout(() => { window.location.href = 'login.html'; }, 2000);
         return;
     }
 
-    console.log("🚀 Usuario autenticado con UUID:", session.user.id);
-
+    // Validar rango administrativo
     const { data: authData, error: rolError } = await supabase
         .from('autenticacion')
         .select('rol_id')
@@ -36,100 +35,85 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (rolError) {
         console.error("❌ Fallo al consultar el rol del usuario:", rolError.message);
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data">❌ Error leyendo permisos: ${rolError.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Error leyendo permisos: ${rolError.message}</td></tr>`;
         return;
     }
 
-    console.log("🚀 Datos de rol obtenidos de la DB:", authData);
-
     if (!authData || (authData.rol_id !== 1 && authData.rol_id !== 2)) {
         console.warn("⚠️ El usuario no posee rango administrativo.");
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data">⛔ Acceso denegado. Se requieren permisos administrativos.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">⛔ Acceso denegado. Se requieren permisos administrativos.</td></tr>`;
         setTimeout(() => { window.location.href = '2inicio.html'; }, 3000);
         return;
     }
 
-    console.log("🚀 Permisos validados con éxito. Ejecutando consulta de registros...");
+    console.log("🚀 Permisos validados con éxito. Ejecutando consulta con JOIN...");
     await consultarOperacionesPendientes();
 
     /**
-     * 2. OBTENER OPERACIONES "En Proceso" DESDE LA TABLA RECARGAS
+     * 2. OBTENER OPERACIONES Y HACER JOIN CON RECARGAS
      */
     async function consultarOperacionesPendientes() {
         try {
-            console.log("🚀 Entrando a consultarOperacionesPendientes()...");
-            tbody.innerHTML = `<tr><td colspan="7" class="no-data">Buscando registros en la base de datos...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="no-data">Buscando registros en la base de datos...</td></tr>`;
 
-            // 1. Traemos TODAS las operaciones directo de la tabla maestra para asegurar compatibilidad total
+            // SOLUCIÓN: Hacemos el JOIN directo pidiendo la columna monto_bruto de la tabla recargas
             const { data: operaciones, error: opError } = await supabase
                 .from('operaciones')
                 .select(`
-                    operacion_id,
-                    monedero_id,
-                    monto_bruto,
-                    estado_operacion,
-                    referencia_interna,
+                    operacion_id, 
+                    monedero_id, 
+                    monto_bruto, 
+                    estado_operacion, 
+                    referencia_interna, 
                     fecha_creacion,
                     recargas (
-                        referencia_pago,
                         monto_bruto
                     )
                 `)
+                .eq('estado_operacion', 'En Proceso')
                 .order('fecha_creacion', { ascending: false });
 
-            if (opError) {
-                console.error("❌ Error al traer operaciones desde la DB:", opError.message);
-                throw opError;
-            }
+            if (opError) throw opError;
 
-            console.log("📊 Datos brutos recibidos de la tabla operaciones:", operaciones);
+            console.log("📊 Datos recibidos de la consulta (con JOIN):", operaciones);
 
             if (!operaciones || operaciones.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="no-data">ℹ️ La base de datos no devolvió ninguna operación en la tabla maestra.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data">🟢 Excelente: No hay operaciones pendientes por procesar en este momento.</td></tr>`;
                 return;
             }
 
-            // 2. Filtramos en el Frontend ignorando mayúsculas, minúsculas y espacios
-            const operacionesFiltradas = operaciones.filter(op => {
-                if (!op.estado_operacion) return false;
-                return op.estado_operacion.trim().toLowerCase() === "en proceso";
-            });
+            tbody.innerHTML = ''; // Limpiamos la tabla para renderizar
 
-            console.log("🔍 Operaciones que pasaron el filtro 'En Proceso':", operacionesFiltradas);
-
-            if (operacionesFiltradas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="no-data">🟢 Excelente: No hay operaciones pendientes por procesar en este momento.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = ''; // Limpiamos el texto de carga
-
-            // 3. Renderizamos las operaciones pendientes
-            operacionesFiltradas.forEach(op => {
+            operaciones.forEach(op => {
                 const tr = document.createElement('tr');
                 
+                // Formateamos la fecha_creacion de la tabla operaciones
                 const fecha = new Date(op.fecha_creacion).toLocaleString('es-VE', {
                     day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                 });
 
-                // Verificamos si existe el detalle en la tabla subordinada de recargas
-                const tieneRecarga = op.recargas && op.recargas.length > 0;
-                
-                // Extraemos los datos usando los nombres reales de columna
-                const refBanco = tieneRecarga ? op.recargas[0].referencia_pago : 'N/A';
-                const montoBs = tieneRecarga ? parseFloat(op.recargas[0].monto_bruto) : 0;
+                // El monto en BDC se extrae del monto_bruto de la tabla operaciones
                 const montoBdc = parseFloat(op.monto_bruto) || 0;
+
+                // BLINDAJE PARA EL JOIN: Extraemos recargas.monto_bruto soportando si viene como objeto único o array
+                let montoBs = 0;
+                if (op.recargas) {
+                    if (Array.isArray(op.recargas) && op.recargas.length > 0) {
+                        montoBs = parseFloat(op.recargas[0].monto_bruto) || 0;
+                    } else if (!Array.isArray(op.recargas)) {
+                        montoBs = parseFloat(op.recargas.monto_bruto) || 0;
+                    }
+                }
 
                 tr.innerHTML = `
                     <td>${fecha}</td>
                     <td style="font-family: monospace; color: #a7f3d0;">${op.referencia_interna}</td>
-                    <td style="font-weight: 600;">${refBanco}</td>
                     <td style="color: var(--neon-green); font-weight: bold;">+${montoBdc.toFixed(2)}</td>
-                    <td>${montoBs > 0 ? montoBs.toFixed(2) : '0.00'} Bs</td>
+                    <td style="color: #fbbf24; font-weight: bold;">${montoBs.toFixed(2)} Bs</td>
                     <td><span class="badge-pending">${op.estado_operacion}</span></td>
                     <td>
                         <div class="btn-action-group">
-                            <button class="btn-admin btn-approve" data-id="${op.operacion_id}" data-monedero="${op.monedero_id}" data-monto="${op.monto_bruto}">
+                            <button class="btn-admin btn-approve" data-id="${op.operacion_id}" data-monedero="${op.monedero_id}" data-monto="${montoBdc}">
                                 <i class="fa-solid fa-check"></i> Confirmar
                             </button>
                             <button class="btn-admin btn-reject" data-id="${op.operacion_id}">
@@ -144,47 +128,44 @@ document.addEventListener('DOMContentLoaded', async () => {
             asignarEventosBotones();
 
         } catch (err) {
-            console.error("❌ Error crítico en el renderizado:", err.message);
-            tbody.innerHTML = `<tr><td colspan="7" class="no-data">❌ Error al procesar datos: ${err.message}</td></tr>`;
+            console.error("❌ Error crítico en el módulo administrativo:", err.message);
+            tbody.innerHTML = `<tr><td colspan="6" class="no-data">❌ Error al procesar datos: ${err.message}</td></tr>`;
         }
     }
 
     function asignarEventosBotones() {
-        // EVENTO PARA CONFIRMAR / APROBAR RECARGA
+        // CONFIRMAR RECARGA
         document.querySelectorAll('.btn-approve').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const opId = e.currentTarget.getAttribute('data-id');
                 const monederoId = e.currentTarget.getAttribute('data-monedero');
                 const bdcAAcreditar = parseFloat(e.currentTarget.getAttribute('data-monto'));
 
+                if (!opId || !monederoId) {
+                    showAlert("❌ Error: Datos de operación o monedero faltantes.", "#f87171");
+                    return;
+                }
+
                 deshabilitarAccionesGlobales();
 
                 try {
                     const ahora = new Date().toISOString();
 
-                    // PASO A: Consultar saldo actual utilizando el nombre de columna real 'bdc_disponible'
                     const { data: monedero, error: monederoErr } = await supabase
                         .from('monederos')
                         .select('bdc_disponible')
                         .eq('monedero_id', monederoId)
-                        .maybeSingle(); // Usamos maybeSingle por si no encuentra el registro
+                        .maybeSingle();
 
                     if (monederoErr) throw monederoErr;
 
                     let nuevoSaldoCalculado = 0;
-
                     if (!monedero) {
-                        // REGLA DE NEGOCIO: Si el monedero no tiene BDC registrados o no existe el registro base, 
-                        // se generan/emiten de forma automática los BDC solicitados directamente desde el rol administrativo.
-                        console.log(`💡 Monedero #${monederoId} no inicializado. Generando balance inicial...`);
                         nuevoSaldoCalculado = bdcAAcreditar;
                     } else {
-                        // Si ya tiene balance, extraemos su valor actual y le sumamos los nuevos BDC
-                        const saldoActual = parseFloat(monedero.bdc_disponible) || 0;
-                        nuevoSaldoCalculado = saldoActual + bdcAAcreditar;
+                        nuevoSaldoCalculado = (parseFloat(monedero.bdc_disponible) || 0) + bdcAAcreditar;
                     }
 
-                    // PASO B: Actualizar el balance en la columna correcta 'bdc_disponible'
                     const { error: balanceErr } = await supabase
                         .from('monederos')
                         .update({ bdc_disponible: nuevoSaldoCalculado })
@@ -192,42 +173,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     if (balanceErr) throw balanceErr;
 
-                    // PASO C: Cambiar el estado de la operación a 'Exitosa'
                     const { error: opErr } = await supabase
                         .from('operaciones')
-                        .update({
-                            estado_operacion: 'Exitosa',
-                            fecha_finalizacion: ahora
-                        })
+                        .update({ estado_operacion: 'Exitosa', fecha_finalizacion: ahora })
                         .eq('operacion_id', opId);
 
                     if (opErr) throw opErr;
 
-                    showAlert(`✅ Operación #${opId} conciliada con éxito. Fondos acreditados al monedero.`, "#4ade80");
+                    showAlert(`✅ Operación #${opId} conciliada con éxito. Fondos acreditados.`, "#4ade80");
                     await consultarOperacionesPendientes(); 
 
                 } catch (error) {
-                    console.error("Fallo en el proceso de abono:", error.message);
+                    console.error("❌ Error en abono:", error.message);
                     showAlert(`❌ Error en abono: ${error.message}`, "#f87171");
                     await consultarOperacionesPendientes();
                 }
             });
         });
 
-        // EVENTO PARA RECHAZAR RECARGA
+        // RECHAZAR RECARGA
         document.querySelectorAll('.btn-reject').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const opId = e.currentTarget.getAttribute('data-id');
-                
+                if (!opId) return;
+
                 deshabilitarAccionesGlobales();
 
                 try {
                     const { error } = await supabase
                         .from('operaciones')
-                        .update({
-                            estado_operacion: 'Fallida',
-                            fecha_finalizacion: new Date().toISOString()
-                        })
+                        .update({ estado_operacion: 'Fallida', fecha_finalizacion: new Date().toISOString() })
                         .eq('operacion_id', opId);
 
                     if (error) throw error;
@@ -236,8 +211,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await consultarOperacionesPendientes();
 
                 } catch (error) {
-                    console.error("Error al rechazar:", error.message);
-                    showAlert(`❌ Error al actualizar estado de rechazo: ${error.message}`, "#f87171");
+                    console.error("❌ Error al rechazar:", error.message);
+                    showAlert(`❌ Error al actualizar estado: ${error.message}`, "#f87171");
                     await consultarOperacionesPendientes();
                 }
             });

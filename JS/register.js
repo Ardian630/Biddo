@@ -1,13 +1,15 @@
 import { supabase } from './supabaseClient.js';
 
-// --- 1. ALGORITMO DE GENERACIÓN DE TARJETA (Luhn) ---
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const NOMBRE_REGEX = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{3,100}$/;
+const FECHA_REGEX = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+
 function generarNumeroTarjetaValido() {
-    let numero = "5337"; // Prefijo (Mastercard)
+    let numero = "5337";
     for (let i = 0; i < 11; i++) {
         numero += Math.floor(Math.random() * 10);
     }
-    
-    // Dígito de control
+
     let sum = 0;
     for (let i = 0; i < numero.length; i++) {
         let digit = parseInt(numero[i]);
@@ -21,7 +23,6 @@ function generarNumeroTarjetaValido() {
     return numero + checkDigit;
 }
 
-// Genera una cadena aleatoria (ej: hacsxai, biddox12, etc.)
 function generarSufijoAleatorio(longitud = 6) {
     const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let resultado = '';
@@ -31,7 +32,6 @@ function generarSufijoAleatorio(longitud = 6) {
     return resultado;
 }
 
-// Genera el username y verifica en la base de datos que no exista
 async function obtenerUsernameUnico() {
     let esUnico = false;
     let usernameGenerado = "";
@@ -40,12 +40,8 @@ async function obtenerUsernameUnico() {
 
     while (!esUnico && intentos < maxIntentos) {
         intentos++;
-        // Generamos un nombre estilo 'user_a1b2c3'
         usernameGenerado = `user_${generarSufijoAleatorio()}`;
-        
-        console.log(`Validando disponibilidad de: ${usernameGenerado}`);
 
-        // CAMBIO: Ahora buscamos en la tabla 'autenticacion'
         const { data, error } = await supabase
             .from('autenticacion')
             .select('nombre_usuario')
@@ -53,13 +49,11 @@ async function obtenerUsernameUnico() {
             .maybeSingle();
 
         if (error) {
-            console.error("Error de base de datos:", error.message);
             throw new Error("Error al conectar con la tabla de autenticación.");
         }
 
-        // Si data es null, significa que el nombre está libre
         if (!data) {
-            esUnico = true; 
+            esUnico = true;
         }
     }
 
@@ -70,7 +64,6 @@ async function obtenerUsernameUnico() {
     return usernameGenerado;
 }
 
-// --- 2. VERIFICACIÓN DE UNICIDAD ---
 async function obtenerNumeroUnico() {
     let esUnico = false;
     let num;
@@ -82,66 +75,200 @@ async function obtenerNumeroUnico() {
     return num;
 }
 
+function mostrarMensaje(texto, color) {
+    const mensajeStatus = document.getElementById('mensaje-status');
+    if (mensajeStatus) {
+        mensajeStatus.textContent = texto;
+        mensajeStatus.style.color = color;
+    } else {
+        alert(texto);
+    }
+}
+
+function validarDocumento(tipoDoc, numDoc) {
+    const docLimpio = numDoc.trim();
+
+    if (!/^\d+$/.test(docLimpio)) {
+        return '❌ El número de documento solo debe contener dígitos.';
+    }
+
+    switch (tipoDoc) {
+        case 'V':
+        case 'E':
+            if (docLimpio.length < 6 || docLimpio.length > 8) {
+                return '❌ La cédula debe tener entre 6 y 8 dígitos.';
+            }
+            break;
+        case 'J':
+            if (docLimpio.length < 7 || docLimpio.length > 10) {
+                return '❌ El RIF jurídico debe tener entre 7 y 10 dígitos.';
+            }
+            break;
+        case 'RIF-J':
+        case 'RIF-V':
+            if (docLimpio.length < 7 || docLimpio.length > 12) {
+                return '❌ El RIF debe tener entre 7 y 12 dígitos.';
+            }
+            break;
+        default:
+            return '❌ Tipo de documento no válido.';
+    }
+
+    return null;
+}
+
+function validarFechaNacimiento(fechaTexto) {
+    if (!FECHA_REGEX.test(fechaTexto)) {
+        return '❌ La fecha debe tener el formato dd-mm-yyyy (ej: 15-03-1995).';
+    }
+
+    const [dia, mes, anio] = fechaTexto.split('-').map(Number);
+    const fecha = new Date(anio, mes - 1, dia);
+
+    if (fecha.getFullYear() !== anio || fecha.getMonth() !== mes - 1 || fecha.getDate() !== dia) {
+        return '❌ La fecha de nacimiento no es válida.';
+    }
+
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - anio;
+    const cumpleEsteAnio = hoy.getMonth() < mes - 1 || (hoy.getMonth() === mes - 1 && hoy.getDate() < dia);
+    if (cumpleEsteAnio) edad--;
+
+    if (edad < 18) {
+        return '❌ Debes ser mayor de 18 años para registrarte.';
+    }
+    if (edad > 120) {
+        return '❌ La fecha de nacimiento no es válida.';
+    }
+
+    return null;
+}
+
+function validarRegistro(datos) {
+    const { email, password, nombreReal, tipoDoc, numDoc, fechaTexto } = datos;
+
+    if (!nombreReal || !NOMBRE_REGEX.test(nombreReal)) {
+        return '❌ El nombre real debe tener al menos 3 letras y solo caracteres alfabéticos.';
+    }
+
+    if (!email) {
+        return '❌ Ingresa tu correo electrónico.';
+    }
+    if (!EMAIL_REGEX.test(email)) {
+        return '❌ El formato del correo electrónico no es válido.';
+    }
+
+    if (!password) {
+        return '❌ Ingresa una contraseña.';
+    }
+    if (password.length < 8) {
+        return '❌ La contraseña debe tener al menos 8 caracteres.';
+    }
+    if (!/[A-Z]/.test(password)) {
+        return '❌ La contraseña debe incluir al menos una letra mayúscula.';
+    }
+    if (!/[0-9]/.test(password)) {
+        return '❌ La contraseña debe incluir al menos un número.';
+    }
+
+    const errorDoc = validarDocumento(tipoDoc, numDoc);
+    if (errorDoc) return errorDoc;
+
+    const errorFecha = validarFechaNacimiento(fechaTexto);
+    if (errorFecha) return errorFecha;
+
+    return null;
+}
+
+function traducirErrorSupabase(mensaje) {
+    if (mensaje.includes('User already registered')) {
+        return 'Este correo electrónico ya está registrado.';
+    }
+    if (mensaje.includes('Password should be at least')) {
+        return 'La contraseña no cumple los requisitos mínimos de seguridad.';
+    }
+    if (mensaje.includes('Unable to validate email address')) {
+        return 'El correo electrónico no es válido.';
+    }
+    if (mensaje.includes('duplicate key') || mensaje.includes('already exists')) {
+        return 'Ya existe un usuario con esos datos.';
+    }
+    return mensaje;
+}
+
 const registerForm = document.querySelector('.login-form');
+const btnRegister = document.getElementById('btn-register');
 
 if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim().toLowerCase();
         const password = document.getElementById('password').value;
-        const nombreReal = document.getElementById('realname').value;
+        const nombreReal = document.getElementById('realname').value.trim();
         const tipoDoc = document.getElementById('doc-type').value;
-        const numDoc = document.getElementById('doc-num').value;
-        const fechaTexto = document.getElementById('birthdate').value;
+        const numDoc = document.getElementById('doc-num').value.trim();
+        const fechaTexto = document.getElementById('birthdate').value.trim();
+
+        const errorValidacion = validarRegistro({ email, password, nombreReal, tipoDoc, numDoc, fechaTexto });
+        if (errorValidacion) {
+            mostrarMensaje(errorValidacion, '#f87171');
+            return;
+        }
+
+        mostrarMensaje('', '');
+        if (btnRegister) {
+            btnRegister.disabled = true;
+            btnRegister.textContent = 'Creando cuenta...';
+        }
 
         try {
-    // 1. Preparar datos automáticos
-    const hoy = new Date();
-    const fechaExp = `${String(hoy.getMonth() + 1).padStart(2, '0')}/${String(hoy.getFullYear() + 5).slice(-2)}`;
-    
-    // --- NUEVO: Generar Username Único ---
-    const usernameUnico = await obtenerUsernameUnico();
-    
-    // 2. Generar número de tarjeta único
-    const numeroTarjeta = await obtenerNumeroUnico();
+            const hoy = new Date();
+            const fechaExp = `${String(hoy.getMonth() + 1).padStart(2, '0')}/${String(hoy.getFullYear() + 5).slice(-2)}`;
 
-    // 3. Formatear fecha de nacimiento
-    const partes = fechaTexto.split('-');
-    const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
+            const usernameUnico = await obtenerUsernameUnico();
+            const numeroTarjeta = await obtenerNumeroUnico();
 
-    // 4. Crear el usuario en Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-    });
+            const partes = fechaTexto.split('-');
+            const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
 
-    if (authError) throw authError;
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+            });
 
-    const userUUID = authData.user.id; 
+            if (authError) throw authError;
 
-    // 5. Llamar al RPC con el username generado
-    const { error: rpcError } = await supabase.rpc('registrar_usuario_completo', {
-    p_uuid: userUUID,
-    p_email: email,
-    p_password: password, 
-    p_username: usernameUnico, // El nombre generado como 'user_hacsxai'
-    p_nombre_completo: nombreReal,
-    p_tipo_doc: tipoDoc,
-    p_num_doc: numDoc,
-    p_fecha_nac: fechaISO,
-    p_numero_tarjeta: numeroTarjeta,
-    p_fecha_exp: fechaExp
-    });
+            const userUUID = authData.user.id;
 
-    if (rpcError) throw rpcError;
+            const { error: rpcError } = await supabase.rpc('registrar_usuario_completo', {
+                p_uuid: userUUID,
+                p_email: email,
+                p_password: password,
+                p_username: usernameUnico,
+                p_nombre_completo: nombreReal,
+                p_tipo_doc: tipoDoc,
+                p_num_doc: numDoc,
+                p_fecha_nac: fechaISO,
+                p_numero_tarjeta: numeroTarjeta,
+                p_fecha_exp: fechaExp
+            });
 
-    alert(`✅ ¡Cuenta creada! Tu nombre de usuario es: ${usernameUnico}`);
-    window.location.href = 'login.html';
+            if (rpcError) throw rpcError;
 
-} catch (error) {
-    console.error("Error:", error.message);
-    alert(`Error: ${error.message}`);
-}
+            mostrarMensaje(`✅ ¡Cuenta creada! Tu nombre de usuario es: ${usernameUnico}`, '#4ade80');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error:", error.message);
+            mostrarMensaje(`❌ ${traducirErrorSupabase(error.message)}`, '#f87171');
+
+            if (btnRegister) {
+                btnRegister.disabled = false;
+                btnRegister.textContent = 'Crear Cuenta';
+            }
+        }
     });
 }

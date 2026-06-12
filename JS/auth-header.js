@@ -68,6 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // A. Ocultar Mercado y Subastas en el NAV
                     if (navMercado) navMercado.style.display = 'none';
                     if (navSubastas) navSubastas.style.display = 'none';
+
+                    const elPublicar = document.getElementById('dropdown-publicar');
+                    if (elPublicar) elPublicar.remove();
     
                     // B. Mostrar e Inyectar "Operaciones Pendientes" en el NAV
                     if (navAdminOps) {
@@ -97,6 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (navAdminOps) navAdminOps.style.display = 'none';
                     const elTasas = document.getElementById('dropdown-tasas');
                     if (elTasas) elTasas.remove();
+
+                    // Vendedores (rol_id === 3): enlace para publicar productos
+                    if (authData && authData.rol_id === 3) {
+                        if (!document.getElementById('dropdown-publicar')) {
+                            const liPublicar = document.createElement('li');
+                            liPublicar.id = 'dropdown-publicar';
+                            liPublicar.innerHTML = `<a href="../HTML/publicar-producto.html"><i class="fa-solid fa-store"></i> Publicar producto</a>`;
+                            const divider = dropdownMenu.querySelector('.divider');
+                            if (divider) {
+                                dropdownMenu.insertBefore(liPublicar, divider);
+                            } else {
+                                dropdownMenu.appendChild(liPublicar);
+                            }
+                        }
+                    } else {
+                        const elPublicar = document.getElementById('dropdown-publicar');
+                        if (elPublicar) elPublicar.remove();
+                    }
                 }
                 // ========================================================
     
@@ -128,9 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navAdminOps) navAdminOps.style.display = 'none';
             if (userAvatarNav) userAvatarNav.src = "../assets/img/user1.jpeg";
             
-            // Remover el botón de tasas si existía de una sesión previa
+            // Remover enlaces dinámicos si existían de una sesión previa
             const elTasas = document.getElementById('dropdown-tasas');
             if (elTasas) elTasas.remove();
+            const elPublicar = document.getElementById('dropdown-publicar');
+            if (elPublicar) elPublicar.remove();
         }
     }
 

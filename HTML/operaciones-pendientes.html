@@ -11,7 +11,7 @@
     <style>
         .admin-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 40px auto;
             padding: 20px;
         }
@@ -42,18 +42,19 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         .ops-table th, .ops-table td {
-            padding: 15px 20px;
+            padding: 18px 28px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
         }
         .ops-table th {
             background: rgba(255, 255, 255, 0.03);
             color: var(--accent-purple, #974ade);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             letter-spacing: 0.5px;
         }
         .ops-table tr:hover {
@@ -62,9 +63,9 @@
         .badge-pending {
             background: rgba(251, 191, 36, 0.1);
             color: var(--wait-orange, #fbbf24);
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
             border: 1px solid rgba(251, 191, 36, 0.2);
         }
@@ -74,7 +75,7 @@
         }
         .btn-admin {
             border: none;
-            padding: 6px 14px;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
@@ -141,18 +142,17 @@
             <table class="ops-table">
                 <thead>
                     <tr>
-                        <th>Fecha de Solicitud</th>
-                        <th>Referencia Interna</th>
-                        <th>Referencia Banco</th>
-                        <th>Monto (BDC)</th>
-                        <th>Equivalente (Bs)</th>
-                        <th>Estado</th>
-                        <th>Acciones Administrativas</th>
+                        <th style="min-width: 190px;">Fecha de Solicitud</th>
+                        <th style="min-width: 260px;">Referencia Interna</th>
+                        <th style="min-width: 150px;">Monto (BDC)</th>
+                        <th style="min-width: 170px;">Equivalente (Bs)</th>
+                        <th style="min-width: 130px;">Estado</th>
+                        <th style="min-width: 210px;">Acciones Administrativas</th>
                     </tr>
                 </thead>
                 <tbody id="ops-tbody">
                     <tr>
-                        <td colspan="7" class="no-data">Cargando flujo de transacciones en proceso...</td>
+                        <td colspan="6" class="no-data">Cargando flujo de transacciones en proceso...</td>
                     </tr>
                 </tbody>
             </table>

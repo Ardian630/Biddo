@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Publicar Producto</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-box { max-width: 550px; padding: 35px; }
+        .field-hint {
+            font-size: 0.75rem;
+            color: var(--text-dim, #94a3b8);
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+        .char-counter {
+            text-align: right;
+            font-size: 0.75rem;
+            color: var(--text-dim, #94a3b8);
+            margin-top: 4px;
+        }
+        #mensaje-status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <a href="mercado.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Mercado
+        </a>
+
+        <div class="login-box glass-form">
+            <div class="login-header">
+                <h2>Publicar Producto</h2>
+                <p>Completa los datos para listar tu producto en el mercado</p>
+            </div>
+
+            <form id="form-publicar-producto">
+                <div class="input-group">
+                    <label for="nombre-producto">Nombre del producto</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-tag"></i>
+                        <input type="text" id="nombre-producto" placeholder="Ej: Zapatillas Air Force 1" maxlength="150" required>
+                    </div>
+                    <span class="field-hint">Mínimo 3 caracteres, máximo 150</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="categoria">Categoría</label>
+                    <div class="input-wrapper select-wrapper">
+                        <select id="categoria" required>
+                            <option value="">Selecciona una categoría</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="descripcion">Descripción</label>
+                    <div class="input-wrapper" style="align-items: flex-start;">
+                        <i class="fa-solid fa-align-left" style="margin-top: 12px;"></i>
+                        <textarea id="descripcion" rows="4" placeholder="Describe tu producto: estado, características, etc." maxlength="1000" required style="background: transparent; border: none; color: #fff; width: 100%; resize: vertical; font-family: inherit; font-size: 0.95rem; outline: none; padding: 10px 0;"></textarea>
+                    </div>
+                    <div class="char-counter"><span id="desc-counter">0</span>/1000</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="precio-bdc">Precio (BDC)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-coins"></i>
+                        <input type="number" id="precio-bdc" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
+                    <span class="field-hint">El precio debe ser mayor a 0 BDC</span>
+                </div>
+
+                <button type="submit" class="login-submit" id="btn-publicar">Publicar en el Mercado</button>
+            </form>
+
+            <div id="mensaje-status"></div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+
+    <script type="module" src="../JS/publicar-producto.js"></script>
+</body>
+</html>
