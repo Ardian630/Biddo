@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 fecha_publicacion,
                 categoria_id,
                 vendedor_id,
+                url_imagen_producto,
                 categorias ( categoria_id, nombre_categoria ),
                 autenticacion (
                     nombre_usuario,
@@ -125,12 +126,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const perfil = producto.autenticacion?.usuarios_perfil;
         const avatar = (Array.isArray(perfil) ? perfil[0]?.url_imagen_vendedor : perfil?.url_imagen_vendedor) || PLACEHOLDER_AVATAR;
         const precio = parseFloat(producto.precio_bdc).toFixed(2);
+        const imgSrc = producto.url_imagen_producto || PLACEHOLDER_IMG;
 
         const card = document.createElement('article');
         card.className = 'product-card';
         card.innerHTML = `
             <div class="image-container">
-                <img src="${PLACEHOLDER_IMG}" alt="${escapeHtml(producto.nombre_producto)}" class="product-img">
+                <img src="${imgSrc}" alt="${escapeHtml(producto.nombre_producto)}" class="product-img">
                 <button class="save-btn" type="button" aria-label="Guardar"><i class="fa-regular fa-heart"></i></button>
             </div>
             <div class="product-details">
@@ -149,25 +151,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         const btnDetalle = card.querySelector('.detail-btn');
-        btnDetalle.addEventListener('click', () => mostrarDetalle(producto));
+        btnDetalle.addEventListener('click', () => {
+            window.location.href = `detalle-producto.html?id=${producto.producto_id}`;
+        });
 
         return card;
-    }
-
-    function mostrarDetalle(producto) {
-        const vendedor = producto.autenticacion?.nombre_usuario || 'Vendedor';
-        const categoria = producto.categorias?.nombre_categoria || 'Sin categoría';
-        const precio = parseFloat(producto.precio_bdc).toFixed(2);
-        const fecha = new Date(producto.fecha_publicacion).toLocaleDateString('es-VE');
-
-        alert(
-            `${producto.nombre_producto}\n\n` +
-            `Categoría: ${categoria}\n` +
-            `Precio: ${precio} BDC\n` +
-            `Vendedor: ${vendedor}\n` +
-            `Publicado: ${fecha}\n\n` +
-            `${producto.descripcion}`
-        );
     }
 
     function moveSlider(wrapper, direction) {

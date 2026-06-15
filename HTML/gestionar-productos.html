@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Gestionar Productos</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/mercado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .admin-header h2 {
+            font-size: 2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .admin-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 4px 0 0 0;
+        }
+        .btn-publicar-nuevo {
+            background: var(--accent-purple, #974ade);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+        .btn-publicar-nuevo:hover {
+            box-shadow: 0 0 20px rgba(151, 74, 222, 0.4);
+            transform: translateY(-2px);
+        }
+        .ops-table-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .ops-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .ops-table th, .ops-table td {
+            padding: 18px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .ops-table th {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--accent-purple, #974ade);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .ops-table tr:hover {
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .btn-action-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-admin {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+        }
+        .btn-edit {
+            background: rgba(151, 74, 222, 0.15);
+            color: var(--accent-purple, #974ade);
+            border: 1px solid rgba(151, 74, 222, 0.3);
+        }
+        .btn-edit:hover {
+            background: var(--accent-purple, #974ade);
+            color: #fff;
+        }
+        .btn-delete {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--error-red, #f87171);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+        .btn-delete:hover {
+            background: var(--error-red, #f87171);
+            color: #fff;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        #alert-banner {
+            display: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container admin-container">
+        <nav>
+            <div class="logo">Biddo<span class="Biddo-Dot">.</span></div>
+
+            <ul>
+                <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
+                <li id="nav-monedero"><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
+                <li id="nav-mercado"><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
+                <li id="nav-subastas"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <li id="nav-admin-ops" style="display: none;"></li>
+            </ul>
+
+            <div class="nav-auth-container">
+                <button class="btn-contact" id="btn-login-ui">Iniciar Sesión</button>
+
+                <div id="user-menu" class="user-dropdown-wrapper" style="display: none;">
+                    <div class="user-profile-trigger">
+                        <div class="user-info-text">
+                            <span class="user-welcome">Hola,</span>
+                            <span id="user-name-label" class="user-name">Cargando...</span>
+                        </div>
+                        <div class="avatar-circle">
+                            <img id="user-avatar-nav" src="../assets/img/user1.jpeg" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        </div>
+                    </div>
+
+                    <ul class="user-dropdown-menu">
+                        <li><a href="perfil.html">Mi Perfil</a></li>
+                        <li><a href="ajustes.html">Ajustes</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" id="btn-logout" class="logout-link">Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <header class="admin-header">
+            <div>
+                <h2>Gestionar Productos</h2>
+                <p>Administra tus publicaciones en el mercado</p>
+            </div>
+            <a href="publicar-producto.html" class="btn-publicar-nuevo">
+                <i class="fa-solid fa-plus"></i> Publicar un nuevo producto
+            </a>
+        </header>
+
+        <div id="alert-banner"></div>
+
+        <div class="ops-table-wrapper">
+            <table class="ops-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio (BDC)</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productos-tbody">
+                    <tr>
+                        <td colspan="5" class="no-data">Cargando productos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script type="module" src="../JS/auth-header.js"></script>
+    <script type="module" src="../JS/gestionar-productos.js"></script>
+</body>
+</html>

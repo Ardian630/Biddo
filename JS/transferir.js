@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Estado global de la vista
     let userUUID = null;
     let miMonedero = null;
+    let miDocumento = 'NA';
     let factorComision = 0; // Guardará el valor decimal directo (ej: 0.02)
     let destinoSeleccionado = null; 
 
@@ -51,6 +52,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (monErr) throw monErr;
             miMonedero = monedero;
+
+            const { data: perfilEmisor } = await supabase
+                .from('usuarios_perfil')
+                .select('numero_documento')
+                .eq('autenticacion_id', userUUID)
+                .maybeSingle();
+
+            if (perfilEmisor?.numero_documento) {
+                miDocumento = perfilEmisor.numero_documento;
+            }
 
             // B. Traer los registros de tasas_config
             const { data: tasasArray, error: tasaErr } = await supabase
@@ -280,6 +291,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }]);
 
             if (transErr) throw transErr;
+
+            const { error: opReceptorErr } = await supabase
+                .from('operaciones')
+                .insert([{
+                    monedero_id: monederoDestino.monedero_id,
+                    monto_bruto: montoEnviar,
+                    monto_comision: 0,
+                    estado_operacion: 'Exitosa',
+                    referencia_interna: `TRANSFERENCIA-DE-${miDocumento}`,
+                    fecha_creacion: fechaISO,
+                    fecha_finalizacion: fechaISO
+                }]);
+
+            if (opReceptorErr) throw opReceptorErr;
 
             if (comision > 0) {
                 const { error: opBiddoErr } = await supabase

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo - Retirar Fondos</title>
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-box { max-width: 550px; padding: 35px; }
+        .calc-preview {
+            font-size: 0.8rem;
+            color: var(--neon-green, #4ade80);
+            margin-top: 5px;
+            margin-left: 5px;
+            display: block;
+        }
+        .calc-comision { color: var(--error-red, #f87171); }
+        .saldo-info {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .saldo-info strong { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container login-container">
+        <a href="mimonedero.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver al Monedero
+        </a>
+
+        <div class="login-box glass-form">
+            <div class="login-header">
+                <h2>Retirar BDC</h2>
+                <p>Solicita el retiro de fondos a tu cuenta bancaria</p>
+            </div>
+
+            <div class="saldo-info">
+                Saldo disponible: <strong id="saldo-disponible">0.00 BDC</strong>
+            </div>
+
+            <form id="form-retiro">
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label for="input-bdc">Monto a retirar (BDC)</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-coins"></i>
+                            <input type="number" id="input-bdc" step="0.01" placeholder="0.00" min="1" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="input-bs">Equivalente en Bs</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            <input type="number" id="input-bs" step="0.01" placeholder="0.00" min="1" required>
+                        </div>
+                    </div>
+                </div>
+
+                <small id="txt-comision" class="calc-comision" style="display:block; margin-bottom:4px; font-size:0.8rem;">Comisión de retiro: 0.00%</small>
+                <small id="txt-total-deducir" style="display:block; margin-bottom:16px; font-size:0.8rem; color:var(--text-muted);"></small>
+
+                <div class="input-group">
+                    <label for="banco">Banco</label>
+                    <div class="input-wrapper select-wrapper">
+                        <select id="banco" required>
+                            <option value="">Selecciona un banco</option>
+                            <option value="Banco Mercantil">Banco Mercantil (0105)</option>
+                            <option value="Banesco">Banesco (0134)</option>
+                            <option value="Banco de Venezuela">Banco de Venezuela (0102)</option>
+                            <option value="Banco Provincial">Banco Provincial (0108)</option>
+                            <option value="BNC">BNC (0191)</option>
+                            <option value="Banco del Tesoro">Banco del Tesoro (0163)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="numero-cuenta">Número de cuenta</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <input type="text" id="numero-cuenta" placeholder="Ej: 0105-0123-45-6789012345" required maxlength="30">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="titular-cuenta">Titular de la cuenta</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="titular-cuenta" placeholder="Nombre completo del titular" required maxlength="150">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cedula-titular">Cédula del titular</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-id-card"></i>
+                        <input type="text" id="cedula-titular" placeholder="Ej: V-12345678" required maxlength="20">
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="telefono">Teléfono (opcional)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="text" id="telefono" placeholder="Ej: 0424-1234567" maxlength="20">
+                    </div>
+                </div>
+
+                <button type="submit" class="login-submit" id="btn-submit-retiro">Enviar Solicitud de Retiro</button>
+            </form>
+
+            <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.95rem; padding: 10px; border-radius: 8px;"></div>
+        </div>
+
+        <div class="glow-effect"></div>
+    </div>
+
+    <script type="module" src="../JS/retiro.js"></script>
+</body>
+</html>

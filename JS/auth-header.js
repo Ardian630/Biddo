@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (navMercado) navMercado.style.display = 'none';
                     if (navSubastas) navSubastas.style.display = 'none';
 
-                    const elPublicar = document.getElementById('dropdown-publicar');
-                    if (elPublicar) elPublicar.remove();
+                    const elGestionar = document.getElementById('dropdown-gestionar');
+                    if (elGestionar) elGestionar.remove();
     
                     // B. Mostrar e Inyectar "Operaciones Pendientes" en el NAV
                     if (navAdminOps) {
@@ -101,22 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     const elTasas = document.getElementById('dropdown-tasas');
                     if (elTasas) elTasas.remove();
 
-                    // Vendedores (rol_id === 3): enlace para publicar productos
+                    // Vendedores (rol_id === 3): enlace para gestionar productos
                     if (authData && authData.rol_id === 3) {
-                        if (!document.getElementById('dropdown-publicar')) {
-                            const liPublicar = document.createElement('li');
-                            liPublicar.id = 'dropdown-publicar';
-                            liPublicar.innerHTML = `<a href="../HTML/publicar-producto.html"><i class="fa-solid fa-store"></i> Publicar producto</a>`;
+                        if (!document.getElementById('dropdown-gestionar')) {
+                            const liGestionar = document.createElement('li');
+                            liGestionar.id = 'dropdown-gestionar';
+                            liGestionar.innerHTML = `<a href="../HTML/gestionar-productos.html"><i class="fa-solid fa-store"></i> Gestionar Productos</a>`;
                             const divider = dropdownMenu.querySelector('.divider');
                             if (divider) {
-                                dropdownMenu.insertBefore(liPublicar, divider);
+                                dropdownMenu.insertBefore(liGestionar, divider);
                             } else {
-                                dropdownMenu.appendChild(liPublicar);
+                                dropdownMenu.appendChild(liGestionar);
                             }
                         }
                     } else {
-                        const elPublicar = document.getElementById('dropdown-publicar');
-                        if (elPublicar) elPublicar.remove();
+                        const elGestionar = document.getElementById('dropdown-gestionar');
+                        if (elGestionar) elGestionar.remove();
                     }
                 }
                 // ========================================================
@@ -152,8 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remover enlaces dinámicos si existían de una sesión previa
             const elTasas = document.getElementById('dropdown-tasas');
             if (elTasas) elTasas.remove();
-            const elPublicar = document.getElementById('dropdown-publicar');
-            if (elPublicar) elPublicar.remove();
+            const elGestionar = document.getElementById('dropdown-gestionar');
+            if (elGestionar) elGestionar.remove();
         }
     }
 

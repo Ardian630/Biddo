@@ -228,14 +228,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Generar un título descriptivo inteligente basado en la referencia interna
+        const ref = (op.referencia_interna || '').toUpperCase();
         let tituloOperacion = montoNum >= 0 ? 'Transferencia recibida' : 'Transferencia enviada';
-        
-        if (op.referencia_interna && op.referencia_interna.toLowerCase().includes('pagomovil')) {
+
+        if (ref.includes('PAGOMOVIL') || ref.includes('RECARGA')) {
             tituloOperacion = 'Recarga por Pago Móvil';
-        } else if (op.referencia_interna && op.referencia_interna.toLowerCase().includes('subasta')) {
+        } else if (ref.includes('SUBASTA')) {
             tituloOperacion = 'Pago de subasta';
-        } else if (op.referencia_interna && op.referencia_interna.toLowerCase().includes('retiro')) {
+        } else if (ref.includes('RETIRO')) {
             tituloOperacion = 'Retiro a Cuenta Bancaria';
+        } else if (ref.includes('TRANSFERENCIA-DE')) {
+            tituloOperacion = 'Transferencia recibida';
+        } else if (ref.includes('TRANSFERENCIA-A')) {
+            tituloOperacion = 'Transferencia enviada';
         }
 
         // Formatear la estampa de tiempo

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biddo - Publicar Producto</title>
+    <title>Biddo - Editar Producto</title>
     <link rel="stylesheet" href="../CSS/mimonedero.css">
     <link rel="stylesheet" href="../CSS/login.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -47,7 +47,6 @@
             object-fit: cover;
             border-radius: 12px;
             margin-top: 10px;
-            display: none;
         }
     </style>
 </head>
@@ -59,21 +58,20 @@
 
         <div class="login-box glass-form">
             <div class="login-header">
-                <h2>Publicar Producto</h2>
-                <p>Completa los datos para listar tu producto en el mercado</p>
+                <h2>Editar Producto</h2>
+                <p>Modifica los datos de tu publicación</p>
             </div>
 
-            <form id="form-publicar-producto">
+            <form id="form-editar-producto">
                 <div class="input-group">
-                    <label for="imagen-producto">Imagen del producto *</label>
+                    <label for="imagen-producto">Imagen del producto</label>
                     <div class="image-upload-area" id="upload-area">
                         <i class="fa-solid fa-camera" style="font-size:1.5rem; color:#974ade; margin-bottom:8px;"></i>
-                        <p style="font-size:0.85rem; color:var(--text-dim); margin:0;">Haz clic para seleccionar una imagen</p>
-                        <p style="font-size:0.75rem; color:var(--text-dim); margin:4px 0 0;">JPG, PNG o WEBP — máx. 5 MB</p>
-                        <input type="file" id="imagen-producto" accept="image/jpeg,image/png,image/webp,image/gif" required style="display:none;">
+                        <p style="font-size:0.85rem; color:var(--text-dim); margin:0;">Haz clic para cambiar la imagen</p>
+                        <input type="file" id="imagen-producto" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
                         <img id="preview-imagen" class="image-preview" alt="Vista previa">
                     </div>
-                    <span class="field-hint">La imagen es obligatoria para publicar</span>
+                    <span class="field-hint">Obligatoria si el producto no tiene imagen</span>
                 </div>
 
                 <div class="input-group">
@@ -112,7 +110,7 @@
                     <span class="field-hint">El precio debe ser mayor a 0 BDC</span>
                 </div>
 
-                <button type="submit" class="login-submit" id="btn-publicar">Publicar en el Mercado</button>
+                <button type="submit" class="login-submit" id="btn-guardar">Guardar Cambios</button>
             </form>
 
             <div id="mensaje-status"></div>
@@ -121,6 +119,6 @@
         <div class="glow-effect"></div>
     </div>
 
-    <script type="module" src="../JS/publicar-producto.js"></script>
+    <script type="module" src="../JS/editar-producto.js"></script>
 </body>
 </html>

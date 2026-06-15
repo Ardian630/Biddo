@@ -4,7 +4,7 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const form = document.getElementById('form-publicar-producto');
+    const form = document.getElementById('form-editar-producto');
     const selectCategoria = document.getElementById('categoria');
     const inputNombre = document.getElementById('nombre-producto');
     const inputDescripcion = document.getElementById('descripcion');
@@ -12,11 +12,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inputImagen = document.getElementById('imagen-producto');
     const uploadArea = document.getElementById('upload-area');
     const previewImagen = document.getElementById('preview-imagen');
-    const btnPublicar = document.getElementById('btn-publicar');
+    const btnGuardar = document.getElementById('btn-guardar');
     const mensajeStatus = document.getElementById('mensaje-status');
     const descCounter = document.getElementById('desc-counter');
 
     let archivoImagen = null;
+    let urlImagenActual = null;
+
+    const params = new URLSearchParams(window.location.search);
+    const productoId = parseInt(params.get('id'), 10);
+
+    if (!productoId || isNaN(productoId)) {
+        window.location.href = 'gestionar-productos.html';
+        return;
+    }
 
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
@@ -38,6 +47,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await cargarCategorias();
 
+    const { data: producto, error: productoError } = await supabase
+        .from('productos')
+        .select('producto_id, nombre_producto, descripcion, precio_bdc, categoria_id, vendedor_id, url_imagen_producto')
+        .eq('producto_id', productoId)
+        .eq('activo', true)
+        .maybeSingle();
+
+    if (productoError || !producto || producto.vendedor_id !== session.user.id) {
+        window.location.href = 'gestionar-productos.html';
+        return;
+    }
+
+    inputNombre.value = producto.nombre_producto;
+    inputDescripcion.value = producto.descripcion;
+    inputPrecio.value = producto.precio_bdc;
+    selectCategoria.value = producto.categoria_id;
+    descCounter.textContent = producto.descripcion.length;
+    urlImagenActual = producto.url_imagen_producto || null;
+
+    if (urlImagenActual) {
+        previewImagen.src = `${urlImagenActual}?t=${Date.now()}`;
+    }
+
     uploadArea.addEventListener('click', () => inputImagen.click());
 
     inputImagen.addEventListener('change', () => {
@@ -58,7 +90,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         archivoImagen = file;
         previewImagen.src = URL.createObjectURL(file);
-        previewImagen.style.display = 'block';
     });
 
     inputDescripcion.addEventListener('input', () => {
@@ -73,47 +104,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         const categoriaId = parseInt(selectCategoria.value, 10);
         const precio = parseFloat(inputPrecio.value);
 
-        const errorValidacion = validarFormulario(nombre, descripcion, categoriaId, precio, archivoImagen);
+        const errorValidacion = validarFormulario(nombre, descripcion, categoriaId, precio, urlImagenActual, archivoImagen);
         if (errorValidacion) {
             mostrarMensaje(errorValidacion, '#f87171');
             return;
         }
 
-        btnPublicar.disabled = true;
-        btnPublicar.textContent = 'Publicando...';
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = 'Guardando...';
 
         try {
-            const urlImagen = await subirImagen(session.user.id);
+            let urlImagenFinal = urlImagenActual;
 
-            const { error: insertError } = await supabase
+            if (archivoImagen) {
+                urlImagenFinal = await subirImagen(session.user.id);
+            }
+
+            const { error: updateError } = await supabase
                 .from('productos')
-                .insert([{
-                    vendedor_id: session.user.id,
+                .update({
                     categoria_id: categoriaId,
                     nombre_producto: nombre,
                     descripcion: descripcion,
                     precio_bdc: precio,
-                    url_imagen_producto: urlImagen,
-                    fecha_publicacion: new Date().toISOString()
-                }]);
+                    url_imagen_producto: urlImagenFinal
+                })
+                .eq('producto_id', productoId)
+                .eq('vendedor_id', session.user.id);
 
-            if (insertError) throw insertError;
+            if (updateError) throw updateError;
 
-            mostrarMensaje('✅ Producto publicado correctamente.', '#4ade80');
-            form.reset();
-            descCounter.textContent = '0';
-            previewImagen.style.display = 'none';
-            archivoImagen = null;
+            mostrarMensaje('✅ Producto actualizado correctamente.', '#4ade80');
 
             setTimeout(() => {
                 window.location.href = 'gestionar-productos.html';
             }, 1500);
 
         } catch (error) {
-            console.error('Error al publicar producto:', error.message);
-            mostrarMensaje('❌ No se pudo publicar el producto. Intenta de nuevo.', '#f87171');
-            btnPublicar.disabled = false;
-            btnPublicar.textContent = 'Publicar en el Mercado';
+            console.error('Error al editar producto:', error.message);
+            mostrarMensaje('❌ No se pudo actualizar el producto. Intenta de nuevo.', '#f87171');
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = 'Guardar Cambios';
         }
     });
 
@@ -145,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (error) {
             mostrarMensaje('⚠️ No se pudieron cargar las categorías.', '#eab308');
-            btnPublicar.disabled = true;
+            btnGuardar.disabled = true;
             return;
         }
 
@@ -157,8 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function validarFormulario(nombre, descripcion, categoriaId, precio, imagen) {
-        if (!imagen) {
+    function validarFormulario(nombre, descripcion, categoriaId, precio, imagenActual, imagenNueva) {
+        if (!imagenActual && !imagenNueva) {
             return '❌ Debes seleccionar una imagen del producto.';
         }
         if (nombre.length < 3) {
