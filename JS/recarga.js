@@ -66,8 +66,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /**
-     * 2. CONVERSIÓN EN TIEMPO REAL
+     * 2. CONVERSIÓN EN TIEMPO REAL Y VALIDACIÓN DE INPUTS
      */
+    // Prevenir caracteres no numéricos como 'e', '-', '+' en los campos de monto
+    const prevenirCaracteresInvalidos = (e) => {
+        if (['e', 'E', '+', '-'].includes(e.key)) {
+            e.preventDefault();
+        }
+    };
+    inputBdc.addEventListener('keydown', prevenirCaracteresInvalidos);
+    inputBs.addEventListener('keydown', prevenirCaracteresInvalidos);
+
+    // Permitir solo números y un máximo de 8 dígitos en la referencia
+    inputReferencia.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length > 8) {
+            this.value = this.value.slice(0, 8);
+        }
+    });
+
     inputBdc.addEventListener('input', () => {
         const bdc = parseFloat(inputBdc.value);
         if (isNaN(bdc) || bdc <= 0) {
@@ -100,6 +117,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!monederoIdGlobal || isNaN(bdcSolicitados) || isNaN(bsTransferidos) || !referenciaBancaria) {
             mostrarMensaje("❌ Por favor, complete todos los campos correctamente.", "#f87171");
+            return;
+        }
+
+        if (bdcSolicitados <= 0 || bsTransferidos <= 0) {
+            mostrarMensaje("❌ El monto a recargar debe ser mayor a 0.", "#f87171");
+            return;
+        }
+
+        if (referenciaBancaria.length < 6 || referenciaBancaria.length > 8) {
+            mostrarMensaje("❌ La referencia de pago debe tener entre 6 y 8 dígitos numéricos.", "#f87171");
             return;
         }
 
