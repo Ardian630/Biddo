@@ -101,6 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     const elTasas = document.getElementById('dropdown-tasas');
                     if (elTasas) elTasas.remove();
 
+                    // Agregar enlace "Mis Deseados" para todos los usuarios normales
+                    if (!document.getElementById('dropdown-deseados')) {
+                        const liDeseados = document.createElement('li');
+                        liDeseados.id = 'dropdown-deseados';
+                        liDeseados.innerHTML = `<a href="../HTML/deseados.html"><i class="fa-solid fa-heart"></i> Mis Deseados</a>`;
+                        const divider = dropdownMenu.querySelector('.divider');
+                        if (divider) {
+                            dropdownMenu.insertBefore(liDeseados, divider);
+                        } else {
+                            dropdownMenu.appendChild(liDeseados);
+                        }
+                    }
+
                     // Vendedores (rol_id === 3): enlace para gestionar productos
                     if (authData && authData.rol_id === 3) {
                         if (!document.getElementById('dropdown-gestionar')) {

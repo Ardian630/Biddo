@@ -9,6 +9,100 @@
     <link rel="stylesheet" href="../CSS/detalle-producto.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Modal General */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .custom-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+            display: flex !important;
+        }
+        .modal-content {
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(151, 74, 222, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .custom-modal.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-title {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .modal-title i {
+            color: var(--accent-purple, #974ade);
+        }
+        .modal-text {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .modal-subtext {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .btn-modal {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+        .btn-accept {
+            background: linear-gradient(135deg, #974ade 0%, #6366f1 100%);
+            color: #fff;
+        }
+        .btn-accept:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .btn-cancel {
+            background: #27272a;
+            color: #a1a1aa;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-cancel:hover {
+            background: #3f3f46;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -55,6 +149,33 @@
             <p style="text-align:center;color:#94a3b8;padding:40px;">Cargando producto...</p>
         </main>
     </div>
+    <!-- Modal de Confirmación de Compra -->
+    <div id="modal-confirmar-compra" class="custom-modal">
+        <div class="modal-content">
+            <h3 class="modal-title"><i class="fa-solid fa-cart-shopping"></i> Confirmar Compra</h3>
+            <div id="compra-modal-detalles" style="text-align: left; margin-bottom: 20px;">
+                <p class="modal-text" style="text-align: center; margin-bottom: 15px;">¿Estás seguro de que deseas comprar este producto?</p>
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #94a3b8;">Producto:</span>
+                        <strong id="modal-compra-titulo" style="color: #fff;">---</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #94a3b8;">Total a pagar:</span>
+                        <strong id="modal-compra-precio" style="color: #4ade80;">0.00 BDC</strong>
+                    </div>
+                </div>
+                <p class="modal-subtext" style="margin-top: 15px; text-align: center; font-size: 0.85rem;">
+                    Tu saldo disponible: <strong id="modal-compra-saldo">0.00 BDC</strong>
+                </p>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" id="btn-confirmar-compra-aceptar" class="btn-modal btn-accept">Confirmar Compra</button>
+                <button type="button" id="btn-confirmar-compra-cancelar" class="btn-modal btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="../JS/auth-header.js"></script>
     <script type="module" src="../JS/detalle-producto.js"></script>
 </body>

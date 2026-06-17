@@ -122,6 +122,32 @@
             transition: color 0.3s;
         }
         .back-link:hover { color: #fff; }
+        .btn-ver-detalle {
+            background: rgba(151, 74, 222, 0.15);
+            color: var(--accent-purple, #974ade);
+            border: 1px solid rgba(151, 74, 222, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-ver-detalle:hover {
+            background: var(--accent-purple, #974ade);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(151, 74, 222, 0.3);
+        }
+        #close-modal-btn:hover {
+            color: #fff !important;
+        }
+        #btn-cerrar-modal:hover {
+            background: #af66f0 !important;
+        }
     </style>
 </head>
 <body>
@@ -157,6 +183,20 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles de Pago Móvil -->
+    <div id="modal-pago-movil" style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center;">
+        <div style="background: #111827; border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; color: white; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <span id="close-modal-btn" style="position: absolute; right: 20px; top: 15px; font-size: 1.8rem; color: #94a3b8; cursor: pointer; transition: color 0.3s; line-height: 1;">&times;</span>
+            <h3 style="margin-top: 0; font-size: 1.3rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; color: #974ade; font-family: 'Poppins', sans-serif;">Datos del Pago Móvil</h3>
+            
+            <div id="pago-movil-details-body" style="margin-top: 20px; font-size: 0.95rem; display: flex; flex-direction: column; gap: 16px; font-family: 'Poppins', sans-serif;">
+                <!-- Se rellena dinámicamente -->
+            </div>
+            
+            <button id="btn-cerrar-modal" style="width: 100%; margin-top: 25px; background: #974ade; border: none; color: white; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif; transition: background 0.3s;">Cerrar</button>
         </div>
     </div>
 

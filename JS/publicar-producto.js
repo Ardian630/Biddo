@@ -17,6 +17,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const descCounter = document.getElementById('desc-counter');
 
     let archivoImagen = null;
+    let monederoGlobal = null;
+    let comisionFijaGlobal = 0;
+
+    // Variables temporales para el formulario
+    let nombreProd = '';
+    let descripcionProd = '';
+    let categoriaIdProd = null;
+    let precioProd = 0;
 
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
@@ -36,6 +44,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Cargar monedero del vendedor y configuración de tasas config
+    async function inicializarDatosVendedor() {
+        try {
+            // A. Cargar Monedero
+            const { data: monedero, error: monederoError } = await supabase
+                .from('monederos')
+                .select('monedero_id, bdc_disponible')
+                .eq('usuario_id', session.user.id)
+                .maybeSingle();
+
+            if (monederoError) throw monederoError;
+            monederoGlobal = monedero;
+
+            // B. Cargar comision fija
+            const { data: configData, error: configError } = await supabase
+                .from('tasas_config')
+                .select('venta_comision_fija')
+                .order('tasa_id', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (configError) throw configError;
+            if (configData) {
+                comisionFijaGlobal = parseFloat(configData.venta_comision_fija) || 0;
+            }
+        } catch (error) {
+            console.error('Error al inicializar datos del vendedor:', error.message);
+        }
+    }
+
+    await inicializarDatosVendedor();
     await cargarCategorias();
 
     uploadArea.addEventListener('click', () => inputImagen.click());
@@ -65,45 +104,144 @@ document.addEventListener('DOMContentLoaded', async () => {
         descCounter.textContent = inputDescripcion.value.length;
     });
 
+    // Referencias a elementos del modal
+    const modalConfirmar = document.getElementById('modal-confirmar-comision');
+    const btnConfirmarAceptar = document.getElementById('btn-confirmar-aceptar');
+    const btnConfirmarCancelar = document.getElementById('btn-confirmar-cancelar');
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const nombre = inputNombre.value.trim();
-        const descripcion = inputDescripcion.value.trim();
-        const categoriaId = parseInt(selectCategoria.value, 10);
-        const precio = parseFloat(inputPrecio.value);
+        nombreProd = inputNombre.value.trim();
+        descripcionProd = inputDescripcion.value.trim();
+        categoriaIdProd = parseInt(selectCategoria.value, 10);
+        precioProd = parseFloat(inputPrecio.value);
 
-        const errorValidacion = validarFormulario(nombre, descripcion, categoriaId, precio, archivoImagen);
+        const errorValidacion = validarFormulario(nombreProd, descripcionProd, categoriaIdProd, precioProd, archivoImagen);
         if (errorValidacion) {
             mostrarMensaje(errorValidacion, '#f87171');
             return;
         }
 
+        if (!monederoGlobal) {
+            mostrarMensaje('❌ No posees un monedero activo para procesar la comisión.', '#f87171');
+            return;
+        }
+
+        const saldoDisponible = parseFloat(monederoGlobal.bdc_disponible) || 0;
+        if (saldoDisponible < comisionFijaGlobal) {
+            mostrarMensaje(`❌ Saldo insuficiente. Publicar requiere una comisión fija de ${comisionFijaGlobal.toFixed(2)} BDC. Tu saldo: ${saldoDisponible.toFixed(2)} BDC.`, '#f87171');
+            return;
+        }
+
+        // Mostrar Modal de Confirmación
+        document.getElementById('comision-fija-monto').textContent = comisionFijaGlobal.toFixed(2);
+        document.getElementById('saldo-vendedor-monto').textContent = saldoDisponible.toFixed(2);
+        modalConfirmar.classList.add('active');
+    });
+
+    btnConfirmarCancelar.addEventListener('click', () => {
+        modalConfirmar.classList.remove('active');
+    });
+
+    btnConfirmarAceptar.addEventListener('click', async () => {
+        modalConfirmar.classList.remove('active');
         btnPublicar.disabled = true;
         btnPublicar.textContent = 'Publicando...';
 
         try {
+            // 1. Subir la imagen
             const urlImagen = await subirImagen(session.user.id);
 
-            const { error: insertError } = await supabase
+            // 2. Insertar el producto en la BD
+            const { data: nuevoProd, error: insertError } = await supabase
                 .from('productos')
                 .insert([{
                     vendedor_id: session.user.id,
-                    categoria_id: categoriaId,
-                    nombre_producto: nombre,
-                    descripcion: descripcion,
-                    precio_bdc: precio,
+                    categoria_id: categoriaIdProd,
+                    nombre_producto: nombreProd,
+                    descripcion: descripcionProd,
+                    precio_bdc: precioProd,
                     url_imagen_producto: urlImagen,
                     fecha_publicacion: new Date().toISOString()
-                }]);
+                }])
+                .select('producto_id')
+                .single();
 
             if (insertError) throw insertError;
+            const productoId = nuevoProd.producto_id;
 
-            mostrarMensaje('✅ Producto publicado correctamente.', '#4ade80');
+            // 3. Descontar la comisión del disponible del monedero del vendedor
+            const saldoDisponible = parseFloat(monederoGlobal.bdc_disponible) || 0;
+            const nuevoSaldoVendedor = saldoDisponible - comisionFijaGlobal;
+            const { error: monederoError } = await supabase
+                .from('monederos')
+                .update({
+                    bdc_disponible: nuevoSaldoVendedor
+                })
+                .eq('monedero_id', monederoGlobal.monedero_id);
+
+            if (monederoError) throw monederoError;
+
+            const fechaISO = new Date().toISOString();
+
+            // 4. Registrar la transacción en operaciones (débito de comisión de publicación)
+            const { error: opVendedorError } = await supabase
+                .from('operaciones')
+                .insert([{
+                    monedero_id: monederoGlobal.monedero_id,
+                    monto_bruto: -comisionFijaGlobal,
+                    monto_comision: 0,
+                    estado_operacion: 'Exitosa',
+                    referencia_interna: `COMISION-PUBLICACION-PRODUCTO-${productoId}`,
+                    fecha_creacion: fechaISO,
+                    fecha_finalizacion: fechaISO
+                }]);
+
+            if (opVendedorError) throw opVendedorError;
+
+            // 5. Abonar comisión al monedero de la empresa (ID 7)
+            if (comisionFijaGlobal > 0) {
+                const MONEDERO_BIDDO_ID = 7;
+                const { data: monederoAdmin, error: adminGetError } = await supabase
+                    .from('monederos')
+                    .select('bdc_disponible')
+                    .eq('monedero_id', MONEDERO_BIDDO_ID)
+                    .single();
+
+                if (adminGetError) throw adminGetError;
+
+                const nuevoSaldoAdmin = (parseFloat(monederoAdmin.bdc_disponible) || 0) + comisionFijaGlobal;
+                const { error: updateAdminError } = await supabase
+                    .from('monederos')
+                    .update({ bdc_disponible: nuevoSaldoAdmin })
+                    .eq('monedero_id', MONEDERO_BIDDO_ID);
+
+                if (updateAdminError) throw updateAdminError;
+
+                const { error: opAdminError } = await supabase
+                    .from('operaciones')
+                    .insert([{
+                        monedero_id: MONEDERO_BIDDO_ID,
+                        monto_bruto: comisionFijaGlobal,
+                        monto_comision: 0,
+                        estado_operacion: 'Exitosa',
+                        referencia_interna: `RECAUDACION-COMISION-PUBLICACION-PRODUCTO-${productoId}`,
+                        fecha_creacion: fechaISO,
+                        fecha_finalizacion: fechaISO
+                    }]);
+
+                if (opAdminError) throw opAdminError;
+            }
+
+            mostrarMensaje('✅ Producto publicado correctamente y comisión cobrada.', '#4ade80');
             form.reset();
             descCounter.textContent = '0';
             previewImagen.style.display = 'none';
             archivoImagen = null;
+            
+            // Actualizar saldo global en memoria
+            monederoGlobal.bdc_disponible = nuevoSaldoVendedor;
 
             setTimeout(() => {
                 window.location.href = 'gestionar-productos.html';
@@ -111,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error('Error al publicar producto:', error.message);
-            mostrarMensaje('❌ No se pudo publicar el producto. Intenta de nuevo.', '#f87171');
+            mostrarMensaje('❌ No se pudo publicar el producto: ' + error.message, '#f87171');
             btnPublicar.disabled = false;
             btnPublicar.textContent = 'Publicar en el Mercado';
         }

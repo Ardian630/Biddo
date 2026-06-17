@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biddo – Mis Deseados</title>
+    <meta name="description" content="Tus productos favoritos guardados en Biddo">
+    <link rel="stylesheet" href="../CSS/mimonedero.css">
+    <link rel="stylesheet" href="../CSS/login.css">
+    <link rel="stylesheet" href="../CSS/mercado.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ---- Encabezado de página ---- */
+        .wishlist-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+        .wishlist-header .page-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, #974ade, #714ade);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 0 20px rgba(151,74,222,0.4);
+            flex-shrink: 0;
+        }
+        .wishlist-header h1 { font-size: 1.8rem; margin: 0; }
+        .wishlist-header p { margin: 4px 0 0; color: #94a3b8; font-size: 0.9rem; }
+
+        /* ---- Grid de tarjetas ---- */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        /* ---- Estado vacío ---- */
+        .empty-wishlist {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        .empty-wishlist .empty-icon {
+            font-size: 3.5rem;
+            color: rgba(151,74,222,0.4);
+            margin-bottom: 18px;
+        }
+        .empty-wishlist h2 { font-size: 1.3rem; margin: 0 0 8px; color: #fff; }
+        .empty-wishlist p { font-size: 0.9rem; }
+        .btn-ir-mercado {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            background: #974ade;
+            color: #fff;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-ir-mercado:hover { background: #af66f0; transform: translateY(-2px); }
+
+        /* ---- Tarjeta de deseado ---- */
+        .wishlist-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s;
+            position: relative;
+        }
+        .wishlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(151,74,222,0.15);
+        }
+        .wishlist-card .card-img-wrap {
+            position: relative;
+            height: 190px;
+            overflow: hidden;
+        }
+        .wishlist-card .card-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .wishlist-card:hover .card-img-wrap img { transform: scale(1.07); }
+
+        /* Botón quitar corazón */
+        .btn-remove-wish {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 36px; height: 36px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            color: #ff4d7e;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-remove-wish:hover {
+            background: #ff4d7e;
+            color: #fff;
+            transform: scale(1.15);
+        }
+
+        .wishlist-card .card-body { padding: 18px; }
+        .wishlist-card .card-seller {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .wishlist-card .card-seller img {
+            width: 30px; height: 30px;
+            border-radius: 50%; object-fit: cover;
+        }
+        .wishlist-card .card-seller span { font-size: 0.78rem; color: #94a3b8; }
+        .wishlist-card .card-title {
+            font-size: 1rem; font-weight: 600;
+            margin: 0 0 14px;
+        }
+        .wishlist-card .card-footer {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .wishlist-card .card-price {
+            font-size: 1.1rem; font-weight: 700;
+        }
+        .wishlist-card .card-price span { font-size: 0.78rem; color: #974ade; }
+        .btn-ver-detalle {
+            background: transparent;
+            border: 1px solid #974ade;
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-ver-detalle:hover { background: #974ade; }
+
+        /* Spinner */
+        .loading-spinner {
+            text-align: center; padding: 60px; color: #94a3b8;
+        }
+        .loading-spinner i { font-size: 2rem; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 480px) {
+            .wishlist-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+            .wishlist-header h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app-header"></div>
+    <script type="module" src="../JS/auth-header.js"></script>
+
+    <div class="container" style="padding-top: 30px; max-width: 1200px;">
+
+        <div class="wishlist-header">
+            <div class="page-icon"><i class="fa-solid fa-heart"></i></div>
+            <div>
+                <h1>Mis Deseados</h1>
+                <p>Los productos que guardaste con ❤️</p>
+            </div>
+        </div>
+
+        <div id="wishlist-content">
+            <div class="loading-spinner">
+                <i class="fa-solid fa-spinner"></i>
+                <p style="margin-top:14px;">Cargando tus favoritos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../JS/deseados.js"></script>
+</body>
+</html>

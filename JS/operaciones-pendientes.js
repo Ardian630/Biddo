@@ -26,6 +26,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    let tasaCompraGlobal = 1.00;
+    let tasaVentaGlobal = 1.00;
+
+    try {
+        const { data: tasaConfig } = await supabase
+            .from('tasas_config')
+            .select('tasa_compra, tasa_venta')
+            .order('tasa_id', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (tasaConfig) {
+            tasaCompraGlobal = parseFloat(tasaConfig.tasa_compra) || 1.00;
+            tasaVentaGlobal = parseFloat(tasaConfig.tasa_venta) || 1.00;
+        }
+    } catch (err) {
+        console.error("Error al cargar tasas de cambio de respaldo:", err);
+    }
+
     await consultarOperacionesPendientes();
 
     async function consultarOperacionesPendientes() {
@@ -43,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     referencia_interna,
                     fecha_creacion,
                     recargas ( monto_bruto, monto_neto ),
-                    retiros ( monto_bruto, monto_neto, monto_bs, banco, titular_cuenta, numero_cuenta )
+                    retiros ( monto_bruto, monto_neto, monto_bs, banco, titular_cuenta, cedula_titular, telefono )
                 `)
                 .eq('estado_operacion', 'En Proceso')
                 .order('fecha_creacion', { ascending: false });
@@ -98,14 +117,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         let montoBs = 0;
         let detalleExtra = '';
 
-        if (esOpRetiro && retiro) {
+        if (esOpRetiro) {
             tipo = 'Retiro';
-            montoBdc = -Math.abs(parseFloat(retiro.monto_neto) || 0);
-            montoBs = parseFloat(retiro.monto_bs) || 0;
-            detalleExtra = `${retiro.banco} • ${retiro.titular_cuenta} • ${retiro.numero_cuenta}`;
-        } else if (recarga) {
+            montoBdc = -Math.abs(parseFloat(op.monto_bruto) || 0);
+            if (retiro) {
+                montoBdc = -Math.abs(parseFloat(retiro.monto_neto) || 0);
+                montoBs = parseFloat(retiro.monto_bs) || 0;
+                detalleExtra = `
+                    <button class="btn-ver-detalle" 
+                        data-banco="${retiro.banco}" 
+                        data-titular="${retiro.titular_cuenta}" 
+                        data-cedula="${retiro.cedula_titular}" 
+                        data-telefono="${retiro.telefono || 'Sin tel'}">
+                        <i class="fa-solid fa-eye"></i> Pago Móvil
+                    </button>
+                `;
+            } else {
+                montoBs = Math.abs(montoBdc) * tasaVentaGlobal;
+                detalleExtra = `
+                    <button class="btn-ver-detalle" 
+                        data-banco="Desconocido" 
+                        data-titular="Desconocido" 
+                        data-cedula="—" 
+                        data-telefono="—">
+                        <i class="fa-solid fa-eye"></i> Ver Datos
+                    </button>
+                `;
+            }
+        } else {
+            tipo = 'Recarga';
             montoBdc = parseFloat(op.monto_bruto) || 0;
-            montoBs = parseFloat(recarga.monto_bruto) || 0;
+            if (recarga) {
+                montoBs = parseFloat(recarga.monto_bruto) || 0;
+            } else {
+                montoBs = montoBdc * tasaCompraGlobal;
+            }
+            const refPago = op.referencia_interna.split('-').pop();
+            detalleExtra = `<span style="font-size:0.8rem; color:var(--text-muted);">Ref: ${refPago}</span>`;
         }
 
         const signo = montoBdc >= 0 ? '+' : '';
@@ -332,4 +380,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         alertBanner.style.display = 'block';
         setTimeout(() => { alertBanner.style.display = 'none'; }, 4000);
     }
+
+    // Manejar click en los botones de detalle para abrir el modal
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-ver-detalle');
+        if (btn) {
+            const banco = btn.getAttribute('data-banco');
+            const titular = btn.getAttribute('data-titular');
+            const cedula = btn.getAttribute('data-cedula');
+            const telefono = btn.getAttribute('data-telefono');
+
+            const modal = document.getElementById('modal-pago-movil');
+            const body = document.getElementById('pago-movil-details-body');
+
+            if (modal && body) {
+                body.innerHTML = `
+                    <div><strong style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 2px;">Banco:</strong> <span style="font-size: 1.05rem; font-weight: 600; color: #fff;">${banco}</span></div>
+                    <div><strong style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 2px;">Titular:</strong> <span style="font-size: 1.05rem; font-weight: 600; color: #fff;">${titular}</span></div>
+                    <div><strong style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 2px;">Cédula:</strong> <span style="font-size: 1.05rem; font-weight: 600; color: #fff;">${cedula}</span></div>
+                    <div><strong style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 2px;">Teléfono:</strong> <span style="font-size: 1.05rem; font-weight: 600; color: #fff;">${telefono}</span></div>
+                `;
+                modal.style.display = 'flex';
+            }
+        }
+    });
+
+    // Cerrar modal
+    const modal = document.getElementById('modal-pago-movil');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const closeBtn2 = document.getElementById('btn-cerrar-modal');
+
+    const ocultarModal = () => {
+        if (modal) modal.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', ocultarModal);
+    if (closeBtn2) closeBtn2.addEventListener('click', ocultarModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) ocultarModal();
+    });
 });

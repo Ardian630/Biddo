@@ -8,6 +8,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const searchInput = document.getElementById('search-productos');
 
     let productosGlobal = [];
+    let deseadosSet = new Set(); // IDs de productos ya en deseados
+    let userUUID = null;
+
+    // Obtener sesión y cargar deseados del usuario
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user) {
+        userUUID = session.user.id;
+        await cargarDeseados();
+    }
 
     await cargarProductos();
 
@@ -28,10 +37,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    async function cargarDeseados() {
+        const { data, error } = await supabase
+            .from('deseados')
+            .select('producto_id')
+            .eq('usuario_id', userUUID);
+        if (!error && data) {
+            deseadosSet = new Set(data.map(d => d.producto_id));
+        }
+    }
+
     async function cargarProductos() {
         marketContent.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:40px;">Cargando productos...</p>';
 
-        const { data: productos, error } = await supabase
+        let query = supabase
             .from('productos')
             .select(`
                 producto_id,
@@ -48,8 +67,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     usuarios_perfil ( url_imagen_vendedor )
                 )
             `)
-            .eq('activo', true)
-            .order('fecha_publicacion', { ascending: false });
+            .eq('activo', true);
+
+        if (userUUID) {
+            query = query.neq('vendedor_id', userUUID);
+        }
+
+        const { data: productos, error } = await query.order('fecha_publicacion', { ascending: false });
 
         if (error) {
             console.error('Error al cargar productos:', error.message);
@@ -127,13 +151,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const avatar = (Array.isArray(perfil) ? perfil[0]?.url_imagen_vendedor : perfil?.url_imagen_vendedor) || PLACEHOLDER_AVATAR;
         const precio = parseFloat(producto.precio_bdc).toFixed(2);
         const imgSrc = producto.url_imagen_producto || PLACEHOLDER_IMG;
+        const esFavorito = deseadosSet.has(producto.producto_id);
 
         const card = document.createElement('article');
         card.className = 'product-card';
         card.innerHTML = `
             <div class="image-container">
                 <img src="${imgSrc}" alt="${escapeHtml(producto.nombre_producto)}" class="product-img">
-                <button class="save-btn" type="button" aria-label="Guardar"><i class="fa-regular fa-heart"></i></button>
+                <button class="save-btn ${esFavorito ? 'saved' : ''}" type="button" data-id="${producto.producto_id}" aria-label="Guardar en deseados">
+                    <i class="${esFavorito ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                </button>
             </div>
             <div class="product-details">
                 <div class="seller-info">
@@ -150,12 +177,58 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
 
-        const btnDetalle = card.querySelector('.detail-btn');
-        btnDetalle.addEventListener('click', () => {
+        // Botón de detalle
+        card.querySelector('.detail-btn').addEventListener('click', () => {
             window.location.href = `detalle-producto.html?id=${producto.producto_id}`;
         });
 
+        // Botón de corazón (deseados)
+        const saveBtn = card.querySelector('.save-btn');
+        saveBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!userUUID) {
+                alert('Debes iniciar sesión para guardar productos en deseados.');
+                return;
+            }
+            await toggleDeseado(producto.producto_id, saveBtn);
+        });
+
         return card;
+    }
+
+    async function toggleDeseado(productoId, btn) {
+        const yaEsFavorito = deseadosSet.has(productoId);
+        const icon = btn.querySelector('i');
+
+        // Animación de feedback
+        btn.style.transform = 'scale(1.3)';
+        setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
+
+        if (yaEsFavorito) {
+            // Quitar de deseados
+            const { error } = await supabase
+                .from('deseados')
+                .delete()
+                .eq('usuario_id', userUUID)
+                .eq('producto_id', productoId);
+
+            if (!error) {
+                deseadosSet.delete(productoId);
+                btn.classList.remove('saved');
+                icon.className = 'fa-regular fa-heart';
+            }
+        } else {
+            // Agregar a deseados
+            const { error } = await supabase
+                .from('deseados')
+                .insert({ usuario_id: userUUID, producto_id: productoId });
+
+            if (!error) {
+                deseadosSet.add(productoId);
+                btn.classList.add('saved');
+                icon.className = 'fa-solid fa-heart';
+            }
+        }
     }
 
     function moveSlider(wrapper, direction) {

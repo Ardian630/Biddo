@@ -227,3 +227,109 @@
     width: 600px;
     height: 600px;
 }
+
+/* ============================================================
+   Estilos de Selects y Form-Rows (Heredados de register.css)
+   ============================================================ */
+
+select option {
+    background: #1a1a1a; /* Fondo sólido para las opciones del desplegable */
+    color: white;
+}
+
+select {
+    width: 100%;
+    background: transparent; /* Permite ver el fondo del input-wrapper */
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    border: none; /* Quitamos el borde nativo porque usaremos el del wrapper */
+    padding: 12px 45px 12px 15px; /* Padding derecho aumentado para la flecha */
+    
+    /* ELIMINACIÓN TOTAL DE LA FLECHA ORIGINAL */
+    appearance: none !important;
+    -webkit-appearance: none !important; /* Crítico para Chrome, Safari y Brave */
+    -moz-appearance: none !important;    /* Crítico para Firefox */
+}
+
+/* Eliminar flecha extra en Internet Explorer/Edge antiguo */
+select::-ms-expand {
+    display: none;
+}
+
+/* Contenedor específico para manejar la flecha personalizada de Biddo */
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05); /* Fondo glassmorphism */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    width: 100%;
+}
+
+/* Nuestra flecha personalizada despegada del borde */
+.select-wrapper::after {
+    content: '\f107'; /* Icono FontAwesome */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    
+    /* DISTANCIA DEL BORDE DERECHO (Aumentada a 25px para despegarla más) */
+    right: 25px; 
+    
+    color: #974ade; /* Color morado Biddo */
+    pointer-events: none; /* Importante: permite clickear el select a través de la flecha */
+    font-size: 0.9rem;
+    z-index: 10;
+}
+
+/* Estilos de form-row para campos dobles en la misma línea */
+.form-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.form-row .small { width: 35%; }
+.form-row .large { width: 65%; }
+
+/* Evitar que el icono de usuario u otros pisen este select si se llegaran a heredar */
+.small .input-wrapper i {
+    display: none; 
+}
+
+/* Ajustes Responsive para form-row */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-row .small, .form-row .large {
+        width: 100%;
+    }
+}
+
+/* Estilo para áreas de texto (textarea) para equiparar con los inputs */
+.input-wrapper textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 15px 12px 45px;
+    border-radius: 15px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: 0.3s;
+    resize: vertical;
+}
+
+.input-wrapper textarea:focus {
+    border-color: #974ade;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 15px rgba(151, 74, 222, 0.2);
+}

@@ -9,6 +9,13 @@ let archivoImagen = null; // Almacena el archivo seleccionado localmente
 
 // 1. CARGAR DATOS AL INICIAR LA PÁGINA
 document.addEventListener('DOMContentLoaded', async () => {
+    // Configurar fallback por si ocurre un error al cargar la imagen
+    if (avatarPreview) {
+        avatarPreview.onerror = () => {
+            avatarPreview.src = '../assets/img/user1.jpeg';
+        };
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
         window.location.href = 'login.html';
@@ -33,10 +40,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (document.getElementById('direccion_usuario')) document.getElementById('direccion_usuario').value = perfilData.direccion_usuario || "";
         if (document.getElementById('pasaporte')) document.getElementById('pasaporte').value = perfilData.pasaporte || "";
         
-        // Si el usuario ya tiene una foto en el Storage, asignamos su URL
+        // Si el usuario ya tiene una foto en el Storage, asignamos su URL. De lo contrario, aseguramos la imagen por defecto
         if (perfilData.url_imagen_vendedor && avatarPreview) {
             // Añadimos un timestamp (?t=...) para romper la caché del navegador al recargar
             avatarPreview.src = `${perfilData.url_imagen_vendedor}?t=${new Date().getTime()}`;
+        } else if (avatarPreview) {
+            avatarPreview.src = '../assets/img/user1.jpeg';
+        }
+    } else {
+        if (avatarPreview) {
+            avatarPreview.src = '../assets/img/user1.jpeg';
         }
     }
 });

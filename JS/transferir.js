@@ -164,8 +164,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             resNombre.textContent = destinoSeleccionado.nombre_completo;
             resDetalles.textContent = `@${destinoSeleccionado.username} • Documento: ${destinoSeleccionado.numero_documento}`;
             searchResults.style.display = 'block';
-            btnAgregarContacto.disabled = false;
-            btnAgregarContacto.innerHTML = `<i class="fa-solid fa-user-plus"></i> Guardar`;
+
+            // Verificar si ya está guardado en contactos
+            const { data: contactoExistente } = await supabase
+                .from('contactos')
+                .select('usuario_contacto_id')
+                .eq('usuario_propietario_id', userUUID)
+                .eq('usuario_contacto_id', resultadoPerfil.autenticacion_id)
+                .maybeSingle();
+
+            if (contactoExistente) {
+                btnAgregarContacto.disabled = true;
+                btnAgregarContacto.innerHTML = `<i class="fa-solid fa-check"></i> Ya guardado`;
+            } else {
+                btnAgregarContacto.disabled = false;
+                btnAgregarContacto.innerHTML = `<i class="fa-solid fa-user-plus"></i> Guardar`;
+            }
 
             validarMontoYBalance();
 
@@ -350,7 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      * 6. MODAL DE CONTACTOS AGREGADOS (DOS PASOS)
      */
     btnAbrirContactos.addEventListener('click', async () => {
-        modalContactos.style.display = 'flex';
+        modalContactos.classList.add('open');
         listaContactos.innerHTML = '<li>Cargando contactos...</li>';
 
         try {
@@ -393,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 li.addEventListener('click', () => {
                     inputBuscar.value = uName;
-                    modalContactos.style.display = 'none';
+                    modalContactos.classList.remove('open');
                     ejecutarBusqueda();
                 });
                 listaContactos.appendChild(li);
@@ -405,7 +419,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    btnCerrarModal.addEventListener('click', () => { modalContactos.style.display = 'none'; });
+    btnCerrarModal.addEventListener('click', () => { modalContactos.classList.remove('open'); });
 
     function mostrarMensajeStatus(visible, texto = "", color = "") {
         if (!visible) { mensajeStatus.style.display = 'none'; return; }

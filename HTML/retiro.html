@@ -47,7 +47,8 @@
             </div>
 
             <form id="form-retiro">
-                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- Sección 1: Montos del Retiro -->
+                <div class="profile-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                     <div class="input-group">
                         <label for="input-bdc">Monto a retirar (BDC)</label>
                         <div class="input-wrapper">
@@ -65,52 +66,73 @@
                 </div>
 
                 <small id="txt-comision" class="calc-comision" style="display:block; margin-bottom:4px; font-size:0.8rem;">Comisión de retiro: 0.00%</small>
-                <small id="txt-total-deducir" style="display:block; margin-bottom:16px; font-size:0.8rem; color:var(--text-muted);"></small>
+                <small id="txt-total-deducir" style="display:block; margin-bottom:20px; font-size:0.8rem; color:var(--text-muted);"></small>
 
-                <div class="input-group">
-                    <label for="banco">Banco</label>
+                <!-- Sección 2: Selección de Cuenta Bancaria -->
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label for="select-cuenta-guardada">Cuenta para Pago Móvil</label>
                     <div class="input-wrapper select-wrapper">
-                        <select id="banco" required>
-                            <option value="">Selecciona un banco</option>
-                            <option value="Banco Mercantil">Banco Mercantil (0105)</option>
-                            <option value="Banesco">Banesco (0134)</option>
-                            <option value="Banco de Venezuela">Banco de Venezuela (0102)</option>
-                            <option value="Banco Provincial">Banco Provincial (0108)</option>
-                            <option value="BNC">BNC (0191)</option>
-                            <option value="Banco del Tesoro">Banco del Tesoro (0163)</option>
+                        <select id="select-cuenta-guardada" required>
+                            <option value="nueva">— Registrar nueva cuenta —</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="numero-cuenta">Número de cuenta</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-building-columns"></i>
-                        <input type="text" id="numero-cuenta" placeholder="Ej: 0105-0123-45-6789012345" required maxlength="30">
+                <!-- Campos de Nueva Cuenta (Expandible/Colapsable) -->
+                <div id="nueva-cuenta-fields" style="display: block;">
+                    <div class="input-group">
+                        <label for="banco">Banco</label>
+                        <div class="input-wrapper select-wrapper">
+                            <select id="banco" required>
+                                <option value="">Cargando bancos...</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label for="titular-cuenta">Titular de la cuenta</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" id="titular-cuenta" placeholder="Nombre completo del titular" required maxlength="150">
+                    <div class="input-group">
+                        <label for="titular-cuenta">Titular de la cuenta</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="titular-cuenta" placeholder="Nombre completo del titular" required maxlength="150">
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label for="cedula-titular">Cédula del titular</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-id-card"></i>
-                        <input type="text" id="cedula-titular" placeholder="Ej: V-12345678" required maxlength="20">
+                    <div class="form-row">
+                        <div class="input-group small">
+                            <label for="doc-type">Tipo</label>
+                            <div class="input-wrapper select-wrapper">
+                                <select id="doc-type" required>
+                                    <option value="V">V</option>
+                                    <option value="J">J</option>
+                                    <option value="E">E</option>
+                                    <option value="RIF-J">RIF-J</option>
+                                    <option value="RIF-V">RIF-V</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group large">
+                            <label for="doc-num">Cédula del Titular</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="doc-num" placeholder="12345678" required>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label for="telefono">Teléfono (opcional)</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-phone"></i>
-                        <input type="text" id="telefono" placeholder="Ej: 0424-1234567" maxlength="20">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label for="telefono">Teléfono</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="text" id="telefono" placeholder="Ej: 0424-1234567" required maxlength="20">
+                        </div>
+                    </div>
+
+                    <!-- Opción de guardar cuenta -->
+                    <div class="form-options" style="margin-bottom: 20px; display: flex; align-items: center;">
+                        <label class="remember-me" style="padding-left: 28px;">
+                            <input type="checkbox" id="guardar-cuenta-check" checked>
+                            <span class="checkmark" style="height: 18px; width: 18px; border-radius: 4px;"></span>
+                            Guardar esta cuenta para futuros retiros
+                        </label>
                     </div>
                 </div>
 

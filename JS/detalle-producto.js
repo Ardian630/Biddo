@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const productoId = parseInt(params.get('id'), 10);
 
+    const { data: { session } } = await supabase.auth.getSession();
+
     if (!productoId || isNaN(productoId)) {
         mostrarError('Producto no encontrado.');
         return;
@@ -42,6 +44,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     renderizarDetalle(producto);
+    inicializarBotonCompra(producto);
     await cargarProductosRelacionados(producto);
 
     function renderizarDetalle(producto) {
@@ -54,6 +57,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             year: 'numeric', month: 'long', day: 'numeric'
         });
         const imgSrc = producto.url_imagen_producto || PLACEHOLDER_IMG;
+
+        let comprarBtnHtml = '';
+        if (!session || !session.user) {
+            comprarBtnHtml = `<button id="btn-comprar-producto" class="login-submit" style="margin-top:20px; width:100%; max-width: 300px; padding: 12px; font-size:1rem; font-weight:600;">Inicia sesión para comprar</button>`;
+        } else {
+            const esVendedor = session.user.id === producto.vendedor_id;
+            comprarBtnHtml = esVendedor 
+                ? `<p style="font-size:0.85rem; color:#eab308; margin-top:15px; font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Este es tu propio producto.</p>`
+                : `<button id="btn-comprar-producto" class="login-submit" style="margin-top:20px; width:100%; max-width: 300px; padding: 12px; font-size:1rem; font-weight:600;">Comprar Producto</button>`;
+        }
 
         detalleContent.innerHTML = `
             <section class="product-detail-panel">
@@ -74,6 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h1 class="product-title">${escapeHtml(producto.nombre_producto)}</h1>
                     <p class="product-description">${escapeHtml(producto.descripcion)}</p>
                     <div class="product-detail-price">${precio} <span>BDC</span></div>
+                    <div id="compra-action-container">
+                        ${comprarBtnHtml}
+                    </div>
                 </div>
             </section>
             <section class="category-section" id="related-section" style="display:none;">
@@ -85,6 +101,214 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </section>
         `;
+    }
+
+    function inicializarBotonCompra(producto) {
+        const btnComprar = document.getElementById('btn-comprar-producto');
+        if (!btnComprar) return;
+
+        btnComprar.addEventListener('click', async () => {
+            if (!session || !session.user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            btnComprar.disabled = true;
+            btnComprar.textContent = 'Procesando saldo...';
+
+            try {
+                // 1. Obtener monedero del comprador
+                const { data: monederoComprador, error: compErr } = await supabase
+                    .from('monederos')
+                    .select('monedero_id, bdc_disponible')
+                    .eq('usuario_id', session.user.id)
+                    .maybeSingle();
+
+                if (compErr || !monederoComprador) {
+                    throw new Error('No se pudo verificar tu saldo de monedero.');
+                }
+
+                const saldoComprador = parseFloat(monederoComprador.bdc_disponible) || 0;
+                const precioProducto = parseFloat(producto.precio_bdc);
+
+                if (saldoComprador < precioProducto) {
+                    alert(`❌ Saldo insuficiente. El producto cuesta ${precioProducto.toFixed(2)} BDC y posees ${saldoComprador.toFixed(2)} BDC.`);
+                    btnComprar.disabled = false;
+                    btnComprar.textContent = 'Comprar Producto';
+                    return;
+                }
+
+                // 2. Abrir Modal de Confirmación
+                const modal = document.getElementById('modal-confirmar-compra');
+                document.getElementById('modal-compra-titulo').textContent = producto.nombre_producto;
+                document.getElementById('modal-compra-precio').textContent = `${precioProducto.toFixed(2)} BDC`;
+                document.getElementById('modal-compra-saldo').textContent = `${saldoComprador.toFixed(2)} BDC`;
+
+                modal.classList.add('active');
+
+                // Lógica de botones del modal
+                const btnConfirmarAceptar = document.getElementById('btn-confirmar-compra-aceptar');
+                const btnConfirmarCancelar = document.getElementById('btn-confirmar-compra-cancelar');
+
+                // Eliminar duplicados de listeners mediante clonación
+                const nuevoAceptar = btnConfirmarAceptar.cloneNode(true);
+                btnConfirmarAceptar.replaceWith(nuevoAceptar);
+                
+                const nuevoCancelar = btnConfirmarCancelar.cloneNode(true);
+                btnConfirmarCancelar.replaceWith(nuevoCancelar);
+
+                nuevoCancelar.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                    btnComprar.disabled = false;
+                    btnComprar.textContent = 'Comprar Producto';
+                });
+
+                nuevoAceptar.addEventListener('click', async () => {
+                    modal.classList.remove('active');
+                    btnComprar.disabled = true;
+                    btnComprar.textContent = 'Procesando Compra...';
+
+                    try {
+                        // A. Cargar tasas config para comision porcentual de venta
+                        const { data: ratesConfig, error: ratesError } = await supabase
+                            .from('tasas_config')
+                            .select('venta_comision_porcentual')
+                            .order('tasa_id', { ascending: false })
+                            .limit(1)
+                            .maybeSingle();
+
+                        if (ratesError) throw ratesError;
+
+                        const factorComisionPorc = ratesConfig ? parseFloat(ratesConfig.venta_comision_porcentual) || 0 : 0;
+                        const comisionAdmin = precioProducto * factorComisionPorc;
+                        const montoVendedor = precioProducto - comisionAdmin;
+
+                        // B. Cargar monedero del vendedor
+                        const { data: monederoVendedor, error: vendErr } = await supabase
+                            .from('monederos')
+                            .select('monedero_id, bdc_disponible')
+                            .eq('usuario_id', producto.vendedor_id)
+                            .single();
+
+                        if (vendErr) throw new Error('No se encontró el monedero del vendedor.');
+
+                        // C. Cargar monedero del admin (ID 7)
+                        const MONEDERO_BIDDO_ID = 7;
+                        const { data: monederoAdmin, error: adminErr } = await supabase
+                            .from('monederos')
+                            .select('monedero_id, bdc_disponible')
+                            .eq('monedero_id', MONEDERO_BIDDO_ID)
+                            .single();
+
+                        if (adminErr) throw new Error('No se encontró el monedero administrador.');
+
+                        // D. Proceder con las actualizaciones de saldo (Comprador, Vendedor, Admin)
+                        const nuevoSaldoComprador = saldoComprador - precioProducto;
+                        const nuevoSaldoVendedor = (parseFloat(monederoVendedor.bdc_disponible) || 0) + montoVendedor;
+                        const nuevoSaldoAdmin = (parseFloat(monederoAdmin.bdc_disponible) || 0) + comisionAdmin;
+
+                        // Actualizar monedero comprador
+                        const { error: updCompErr } = await supabase
+                            .from('monederos')
+                            .update({ bdc_disponible: nuevoSaldoComprador })
+                            .eq('monedero_id', monederoComprador.monedero_id);
+
+                        if (updCompErr) throw updCompErr;
+
+                        // Actualizar monedero vendedor
+                        const { error: updVendErr } = await supabase
+                            .from('monederos')
+                            .update({ bdc_disponible: nuevoSaldoVendedor })
+                            .eq('monedero_id', monederoVendedor.monedero_id);
+
+                        if (updVendErr) throw updVendErr;
+
+                        // Actualizar monedero admin (si comision > 0)
+                        if (comisionAdmin > 0) {
+                            const { error: updAdminErr } = await supabase
+                                .from('monederos')
+                                .update({ bdc_disponible: nuevoSaldoAdmin })
+                                .eq('monedero_id', MONEDERO_BIDDO_ID);
+
+                            if (updAdminErr) throw updAdminErr;
+                        }
+
+                        const fechaISO = new Date().toISOString();
+
+                        // E. Registrar transacciones en operaciones
+                        // 1. Débito del comprador
+                        const { error: opCompErr } = await supabase
+                            .from('operaciones')
+                            .insert([{
+                                monedero_id: monederoComprador.monedero_id,
+                                monto_bruto: -precioProducto,
+                                monto_comision: 0,
+                                estado_operacion: 'Exitosa',
+                                referencia_interna: `COMPRA-PRODUCTO-${producto.producto_id}-COMPRADOR`,
+                                fecha_creacion: fechaISO,
+                                fecha_finalizacion: fechaISO
+                            }]);
+
+                        if (opCompErr) throw opCompErr;
+
+                        // 2. Crédito del vendedor (descontada la comisión)
+                        const { error: opVendErr } = await supabase
+                            .from('operaciones')
+                            .insert([{
+                                monedero_id: monederoVendedor.monedero_id,
+                                monto_bruto: montoVendedor,
+                                monto_comision: comisionAdmin,
+                                estado_operacion: 'Exitosa',
+                                referencia_interna: `COMPRA-PRODUCTO-${producto.producto_id}-VENDEDOR`,
+                                fecha_creacion: fechaISO,
+                                fecha_finalizacion: fechaISO
+                            }]);
+
+                        if (opVendErr) throw opVendErr;
+
+                        // 3. Recaudación de comisión para el monedero administrador
+                        if (comisionAdmin > 0) {
+                            const { error: opAdminErr } = await supabase
+                                .from('operaciones')
+                                .insert([{
+                                    monedero_id: MONEDERO_BIDDO_ID,
+                                    monto_bruto: comisionAdmin,
+                                    monto_comision: 0,
+                                    estado_operacion: 'Exitosa',
+                                    referencia_interna: `RECAUDACION-COMISION-COMPRA-PRODUCTO-${producto.producto_id}`,
+                                    fecha_creacion: fechaISO,
+                                    fecha_finalizacion: fechaISO
+                                }]);
+
+                            if (opAdminErr) throw opAdminErr;
+                        }
+
+                        // F. Marcar el producto como inactivo (vendido)
+                        const { error: prodDeactErr } = await supabase
+                            .from('productos')
+                            .update({ activo: false })
+                            .eq('producto_id', producto.producto_id);
+
+                        if (prodDeactErr) throw prodDeactErr;
+
+                        alert('✅ ¡Compra realizada con éxito!');
+                        window.location.href = 'mimonedero.html';
+
+                    } catch (err) {
+                        console.error('Error al procesar la transacción de compra:', err.message);
+                        alert(`❌ Error al completar la compra: ${err.message}`);
+                        btnComprar.disabled = false;
+                        btnComprar.textContent = 'Comprar Producto';
+                    }
+                });
+
+            } catch (err) {
+                console.error('Error al iniciar compra:', err.message);
+                alert(`❌ Error: ${err.message}`);
+                btnComprar.disabled = false;
+                btnComprar.textContent = 'Comprar Producto';
+            }
+        });
     }
 
     async function cargarProductosRelacionados(producto) {

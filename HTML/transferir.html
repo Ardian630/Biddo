@@ -10,45 +10,163 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .login-box { max-width: 550px; padding: 35px; }
+
+        /* Fila de búsqueda: input + botón lado a lado */
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+        .search-row .input-wrapper {
+            flex: 1;
+            min-width: 0; /* evita overflow en FF/Safari */
+        }
+        .search-row .input-wrapper input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Botón de búsqueda alineado al alto del input */
+        .btn-buscar-row {
+            flex-shrink: 0;
+            background: #974ade;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            padding: 0 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+        }
+        .btn-buscar-row:hover {
+            background: #af66f0;
+            transform: translateY(-1px);
+        }
+
+        /* Botón de contactos */
+        .btn-contactos {
+            background: transparent;
+            border: 1px solid rgba(151,74,222,0.5);
+            color: #974ade;
+            border-radius: 10px;
+            padding: 7px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-contactos:hover {
+            background: rgba(151,74,222,0.15);
+            border-color: #974ade;
+        }
+
+        /* Tarjeta de resultado */
         .search-results-box {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 15px 18px;
+            margin: 14px 0;
             display: none;
         }
         .user-found-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
-        .user-found-info { font-size: 0.9rem; color: #fff; }
-        .user-found-info span { display: block; color: var(--text-muted); font-size: 0.8rem; }
+        .user-found-info { font-size: 0.9rem; color: #fff; flex: 1; min-width: 0; }
+        .user-found-info span {
+            display: block;
+            color: var(--text-muted, #94a3b8);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Botón pequeño (guardar contacto) */
         .btn-small {
-            background: var(--accent-purple, #974ade);
-            color: #fff; border: none; padding: 6px 12px;
-            border-radius: 6px; cursor: pointer; font-size: 0.8rem;
-            display: flex; align-items: center; gap: 5px;
+            flex-shrink: 0;
+            background: #974ade;
+            color: #fff;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Poppins', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
-        .btn-small:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-small:hover:not(:disabled) { background: #af66f0; }
+        .btn-small:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* Modal de contactos */
         .contacts-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); display: none; justify-content: center;
-            align-items: center; z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
+        .contacts-modal.open { display: flex; }
         .contacts-content {
-            background: #111; border: 1px solid rgba(255,255,255,0.1);
-            padding: 25px; border-radius: 16px; width: 90%; max-width: 400px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 18px;
+            width: 92%;
+            max-width: 400px;
+        }
+        .contacts-content h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .contacts-list-ul {
-            list-style: none; padding: 0; margin: 15px 0; max-height: 200px; overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 14px 0;
+            max-height: 220px;
+            overflow-y: auto;
         }
         .contacts-list-ul li {
-            padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.15s;
         }
-        .contacts-list-ul li:hover { background: rgba(255,255,255,0.02); }
+        .contacts-list-ul li:hover { background: rgba(255,255,255,0.04); }
+
+        /* Mensaje de estado */
+        #mensaje-status {
+            text-align: center;
+            margin-top: 14px;
+            display: none;
+            font-size: 0.92rem;
+            padding: 10px 14px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -63,26 +181,36 @@
                 <p>Envía fondos al instante a otros usuarios de la red</p>
             </div>
 
+            <!-- Búsqueda de beneficiario -->
             <div class="input-group" style="margin-bottom: 10px;">
                 <label>Buscar Beneficiario</label>
-                <div class="input-wrapper" style="display: flex; gap: 10px;">
-                    <i class="fa-solid fa-user-search" style="margin-top: 13px;"></i>
-                    <input type="text" id="input-buscar" placeholder="Nombre de usuario o Cédula..." style="flex: 1;">
-                    <button type="button" id="btn-buscar" class="btn-small" style="height: 45px; padding: 0 15px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <div class="search-row">
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="input-buscar" placeholder="Nombre de usuario o Cédula...">
+                    </div>
+                    <button type="button" id="btn-buscar" class="btn-buscar-row" title="Buscar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
                 </div>
             </div>
 
-            <div style="text-align: right; margin-bottom: 15px;">
-                <button type="button" id="btn-abrir-contactos" class="btn-small" style="display: inline-flex;"><i class="fa-solid fa-address-book"></i> Mis Contactos</button>
+            <div style="text-align: right; margin-bottom: 14px;">
+                <button type="button" id="btn-abrir-contactos" class="btn-contactos">
+                    <i class="fa-solid fa-address-book"></i> Mis Contactos
+                </button>
             </div>
 
+            <!-- Resultado de búsqueda -->
             <div id="search-results" class="search-results-box">
                 <div class="user-found-card">
                     <div class="user-found-info">
                         <strong id="res-nombre">---</strong>
                         <span id="res-detalles">@username • C.I: ---</span>
                     </div>
-                    <button type="button" id="btn-agregar-contacto" class="btn-small"><i class="fa-solid fa-user-plus"></i> Guardar</button>
+                    <button type="button" id="btn-agregar-contacto" class="btn-small">
+                        <i class="fa-solid fa-user-plus"></i> Guardar
+                    </button>
                 </div>
             </div>
 
@@ -93,23 +221,29 @@
                         <i class="fa-solid fa-coins"></i>
                         <input type="number" id="input-monto" step="0.01" placeholder="0.00" min="0.01" required>
                     </div>
-                    <small id="txt-comision" style="color: var(--text-muted); display:block; margin-top:5px; font-size:0.8rem;">Comisión de red: 0.00%</small>
-                    <small id="txt-total-deducir" style="color: var(--error-red, #f87171); display:block; margin-top:2px; font-size:0.8rem; font-weight: 600;"></small>
+                    <small id="txt-comision" style="color: var(--text-muted, #94a3b8); display:block; margin-top:5px; font-size:0.8rem;">Comisión de red: 0.00%</small>
+                    <small id="txt-total-deducir" style="display:block; margin-top:2px; font-size:0.8rem; font-weight: 600;"></small>
                 </div>
 
-                <button type="submit" class="login-submit" id="btn-submit-transferencia" disabled style="margin-top: 20px;">Confirmar y Transferir</button>
+                <button type="submit" class="login-submit" id="btn-submit-transferencia" disabled style="margin-top: 20px;">
+                    Confirmar y Transferir
+                </button>
             </form>
 
-            <div id="mensaje-status" style="text-align: center; margin-top: 15px; display: none; font-size: 0.95rem; padding: 10px; border-radius: 8px;"></div>
+            <div id="mensaje-status"></div>
         </div>
     </div>
 
+    <!-- Modal de contactos -->
     <div id="modal-contactos" class="contacts-modal">
         <div class="contacts-content">
             <h3><i class="fa-solid fa-address-book"></i> Mis Contactos</h3>
             <ul id="lista-contactos" class="contacts-list-ul">
-                </ul>
-            <button type="button" id="btn-cerrar-modal" class="login-submit" style="background: #333; margin-top: 10px; padding: 8px;">Cerrar</button>
+                <li>Cargando contactos...</li>
+            </ul>
+            <button type="button" id="btn-cerrar-modal" class="login-submit" style="background: #333; padding: 9px; margin-top: 4px;">
+                Cerrar
+            </button>
         </div>
     </div>
 
