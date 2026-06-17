@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Variables de control global
     let tasaCompraGlobal = 1.00; 
     let monederoIdGlobal = null;
+    let bdcRetenidoGlobal = 0;
 
     /**
      * 1. VALIDAR AUTENTICACIÓN Y CARGAR ÚLTIMA TASA CONFIGURADA
@@ -27,10 +28,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function inicializarDatos() {
         try {
-            // A. Obtener el monedero_id del usuario conectado
+            // A. Obtener el monedero_id y bdc_retenido del usuario conectado
             const { data: monedero, error: monederoError } = await supabase
                 .from('monederos')
-                .select('monedero_id')
+                .select('monedero_id, bdc_retenido')
                 .eq('usuario_id', userUUID)
                 .maybeSingle();
 
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             monederoIdGlobal = monedero.monedero_id;
+            bdcRetenidoGlobal = parseFloat(monedero.bdc_retenido) || 0;
 
             // B. Traer el ÚLTIMO registro de la tabla tasas_config para la conversión en vivo
             const { data: tasaConfig, error: tasaError } = await supabase
@@ -137,6 +139,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }]);
 
             if (recargaError) throw recargaError;
+
+            // PASO C: Sumar el monto solicitado al saldo retenido en el monedero
+            const nuevoRetenido = bdcRetenidoGlobal + bdcSolicitados;
+            const { error: walletUpdateErr } = await supabase
+                .from('monederos')
+                .update({ bdc_retenido: nuevoRetenido })
+                .eq('monedero_id', monederoIdGlobal);
+
+            if (walletUpdateErr) throw walletUpdateErr;
 
             // ÉXITO GLOBAL
             mostrarMensaje("✅ Solicitud enviada correctamente. El estado actual de la operación es 'En Proceso'.", "#4ade80");

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inputNombre = document.getElementById('nombre-producto');
     const inputDescripcion = document.getElementById('descripcion');
     const inputPrecio = document.getElementById('precio-bdc');
+    const inputStock = document.getElementById('stock');
     const inputImagen = document.getElementById('imagen-producto');
     const uploadArea = document.getElementById('upload-area');
     const previewImagen = document.getElementById('preview-imagen');
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let descripcionProd = '';
     let categoriaIdProd = null;
     let precioProd = 0;
+    let stockProd = 1;
 
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
@@ -116,8 +118,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         descripcionProd = inputDescripcion.value.trim();
         categoriaIdProd = parseInt(selectCategoria.value, 10);
         precioProd = parseFloat(inputPrecio.value);
+        stockProd = parseInt(inputStock ? inputStock.value : '1', 10);
 
-        const errorValidacion = validarFormulario(nombreProd, descripcionProd, categoriaIdProd, precioProd, archivoImagen);
+        const errorValidacion = validarFormulario(nombreProd, descripcionProd, categoriaIdProd, precioProd, stockProd, archivoImagen);
         if (errorValidacion) {
             mostrarMensaje(errorValidacion, '#f87171');
             return;
@@ -162,6 +165,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     nombre_producto: nombreProd,
                     descripcion: descripcionProd,
                     precio_bdc: precioProd,
+                    stock: stockProd,
+                    activo: stockProd > 0,
                     url_imagen_producto: urlImagen,
                     fecha_publicacion: new Date().toISOString()
                 }])
@@ -295,7 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function validarFormulario(nombre, descripcion, categoriaId, precio, imagen) {
+    function validarFormulario(nombre, descripcion, categoriaId, precio, stock, imagen) {
         if (!imagen) {
             return '❌ Debes seleccionar una imagen del producto.';
         }
@@ -319,6 +324,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (precio > 9999999.99) {
             return '❌ El precio ingresado es demasiado alto.';
+        }
+        if (isNaN(stock) || stock < 1) {
+            return '❌ El stock debe ser al menos 1 unidad.';
         }
         return null;
     }

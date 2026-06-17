@@ -12,6 +12,8 @@ const SELECT_PRODUCTO = `
     categoria_id,
     vendedor_id,
     url_imagen_producto,
+    stock,
+    activo,
     categorias ( categoria_id, nombre_categoria ),
     autenticacion (
         nombre_usuario,
@@ -35,11 +37,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         .from('productos')
         .select(SELECT_PRODUCTO)
         .eq('producto_id', productoId)
-        .eq('activo', true)
         .maybeSingle();
 
     if (error || !producto) {
-        mostrarError('No se pudo cargar el producto o ya no está disponible.');
+        mostrarError('No se pudo cargar el producto.');
         return;
     }
 
@@ -59,13 +60,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const imgSrc = producto.url_imagen_producto || PLACEHOLDER_IMG;
 
         let comprarBtnHtml = '';
-        if (!session || !session.user) {
+        let quantityHtml = '';
+
+        if (producto.stock === 0 || !producto.activo) {
+            comprarBtnHtml = `<p style="font-size:1rem; color:#f87171; margin-top:15px; font-weight:600;"><i class="fa-solid fa-circle-xmark"></i> Producto Agotado / No Disponible</p>`;
+        } else if (!session || !session.user) {
             comprarBtnHtml = `<button id="btn-comprar-producto" class="login-submit" style="margin-top:20px; width:100%; max-width: 300px; padding: 12px; font-size:1rem; font-weight:600;">Inicia sesión para comprar</button>`;
         } else {
             const esVendedor = session.user.id === producto.vendedor_id;
-            comprarBtnHtml = esVendedor 
-                ? `<p style="font-size:0.85rem; color:#eab308; margin-top:15px; font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Este es tu propio producto.</p>`
-                : `<button id="btn-comprar-producto" class="login-submit" style="margin-top:20px; width:100%; max-width: 300px; padding: 12px; font-size:1rem; font-weight:600;">Comprar Producto</button>`;
+            if (esVendedor) {
+                comprarBtnHtml = `<p style="font-size:0.85rem; color:#eab308; margin-top:15px; font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Este es tu propio producto.</p>`;
+            } else {
+                comprarBtnHtml = `<button id="btn-comprar-producto" class="login-submit" style="margin-top:20px; width:100%; max-width: 300px; padding: 12px; font-size:1rem; font-weight:600;">Comprar Producto</button>`;
+                
+                let optionsHtml = '';
+                const maxQty = Math.min(producto.stock, 10);
+                for (let i = 1; i <= maxQty; i++) {
+                    optionsHtml += `<option value="${i}">${i}</option>`;
+                }
+                quantityHtml = `
+                    <div class="quantity-selector" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                        <label for="compra-cantidad" style="color: #94a3b8; font-size: 0.9rem; font-weight: 500;">Cantidad a comprar:</label>
+                        <select id="compra-cantidad" style="background: #1f1f23; color: #fff; border: 1px solid rgba(151, 74, 222, 0.3); border-radius: 8px; padding: 6px 12px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; outline: none; cursor: pointer;">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+            }
         }
 
         detalleContent.innerHTML = `
@@ -87,7 +108,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <h1 class="product-title">${escapeHtml(producto.nombre_producto)}</h1>
                     <p class="product-description">${escapeHtml(producto.descripcion)}</p>
                     <div class="product-detail-price">${precio} <span>BDC</span></div>
-                    <div id="compra-action-container">
+                    <p class="product-stock" style="margin-top:10px; font-size:0.95rem; color:#a7f3d0; display:flex; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-cubes"></i> Unidades disponibles: <strong id="product-stock-count">${producto.stock}</strong>
+                    </p>
+                    ${quantityHtml}
+                    <div id="compra-action-container" style="margin-top: 10px;">
                         ${comprarBtnHtml}
                     </div>
                 </div>
@@ -129,10 +154,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 const saldoComprador = parseFloat(monederoComprador.bdc_disponible) || 0;
+                const inputCantidad = document.getElementById('compra-cantidad');
+                const cantidad = inputCantidad ? parseInt(inputCantidad.value, 10) : 1;
                 const precioProducto = parseFloat(producto.precio_bdc);
+                const precioTotal = precioProducto * cantidad;
 
-                if (saldoComprador < precioProducto) {
-                    alert(`❌ Saldo insuficiente. El producto cuesta ${precioProducto.toFixed(2)} BDC y posees ${saldoComprador.toFixed(2)} BDC.`);
+                if (saldoComprador < precioTotal) {
+                    alert(`❌ Saldo insuficiente. Total de compra: ${precioTotal.toFixed(2)} BDC (Cantidad: ${cantidad}). Posees ${saldoComprador.toFixed(2)} BDC.`);
                     btnComprar.disabled = false;
                     btnComprar.textContent = 'Comprar Producto';
                     return;
@@ -140,8 +168,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // 2. Abrir Modal de Confirmación
                 const modal = document.getElementById('modal-confirmar-compra');
-                document.getElementById('modal-compra-titulo').textContent = producto.nombre_producto;
-                document.getElementById('modal-compra-precio').textContent = `${precioProducto.toFixed(2)} BDC`;
+                document.getElementById('modal-compra-titulo').textContent = `${producto.nombre_producto} (x${cantidad})`;
+                document.getElementById('modal-compra-precio').textContent = `${precioTotal.toFixed(2)} BDC`;
                 document.getElementById('modal-compra-saldo').textContent = `${saldoComprador.toFixed(2)} BDC`;
 
                 modal.classList.add('active');
@@ -180,8 +208,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (ratesError) throw ratesError;
 
                         const factorComisionPorc = ratesConfig ? parseFloat(ratesConfig.venta_comision_porcentual) || 0 : 0;
-                        const comisionAdmin = precioProducto * factorComisionPorc;
-                        const montoVendedor = precioProducto - comisionAdmin;
+                        const comisionAdmin = precioTotal * factorComisionPorc;
+                        const montoVendedor = precioTotal - comisionAdmin;
 
                         // B. Cargar monedero del vendedor
                         const { data: monederoVendedor, error: vendErr } = await supabase
@@ -203,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if (adminErr) throw new Error('No se encontró el monedero administrador.');
 
                         // D. Proceder con las actualizaciones de saldo (Comprador, Vendedor, Admin)
-                        const nuevoSaldoComprador = saldoComprador - precioProducto;
+                        const nuevoSaldoComprador = saldoComprador - precioTotal;
                         const nuevoSaldoVendedor = (parseFloat(monederoVendedor.bdc_disponible) || 0) + montoVendedor;
                         const nuevoSaldoAdmin = (parseFloat(monederoAdmin.bdc_disponible) || 0) + comisionAdmin;
 
@@ -241,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             .from('operaciones')
                             .insert([{
                                 monedero_id: monederoComprador.monedero_id,
-                                monto_bruto: -precioProducto,
+                                monto_bruto: -precioTotal,
                                 monto_comision: 0,
                                 estado_operacion: 'Exitosa',
                                 referencia_interna: `COMPRA-PRODUCTO-${producto.producto_id}-COMPRADOR`,
@@ -283,16 +311,43 @@ document.addEventListener('DOMContentLoaded', async () => {
                             if (opAdminErr) throw opAdminErr;
                         }
 
-                        // F. Marcar el producto como inactivo (vendido)
-                        const { error: prodDeactErr } = await supabase
-                            .from('productos')
-                            .update({ activo: false })
-                            .eq('producto_id', producto.producto_id);
+                        // F. Actualizar el stock del producto mediante una función RPC para evitar problemas de RLS de Supabase
+                        const { error: prodDeactErr } = await supabase.rpc('decrementar_stock_producto', {
+                            p_producto_id: producto.producto_id,
+                            p_cantidad: cantidad
+                        });
 
                         if (prodDeactErr) throw prodDeactErr;
 
-                        alert('✅ ¡Compra realizada con éxito!');
-                        window.location.href = 'mimonedero.html';
+                        // G. Obtener los datos actuales del comprador para pre-rellenar el envío
+                        const { data: profileBuyer } = await supabase
+                            .from('usuarios_perfil')
+                            .select('telefono, direccion_usuario')
+                            .eq('autenticacion_id', session.user.id)
+                            .maybeSingle();
+
+                        const buyerPhone = profileBuyer?.telefono || 'No especificado';
+                        const buyerAddress = profileBuyer?.direccion_usuario || 'No especificada';
+
+                        // H. Insertar en la tabla de envios
+                        const { data: newEnvio, error: envioErr } = await supabase
+                            .from('envios')
+                            .insert([{
+                                producto_id: producto.producto_id,
+                                comprador_id: session.user.id,
+                                vendedor_id: producto.vendedor_id,
+                                cantidad: cantidad,
+                                precio_unitario: precioProducto,
+                                telefono_contacto: buyerPhone,
+                                direccion_entrega: buyerAddress,
+                                estado_envio: 'Pendiente'
+                            }])
+                            .select('envio_id')
+                            .single();
+
+                        if (envioErr) throw envioErr;
+
+                        await mostrarPanelPostCompra(producto, newEnvio.envio_id);
 
                     } catch (err) {
                         console.error('Error al procesar la transacción de compra:', err.message);
@@ -374,6 +429,198 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         return card;
+    }
+
+    async function mostrarPanelPostCompra(producto, envioId) {
+        const actionContainer = document.getElementById('compra-action-container');
+        if (!actionContainer) return;
+
+        actionContainer.innerHTML = `
+            <div class="success-panel">
+                <div class="success-header">
+                    <i class="fa-solid fa-circle-check success-icon"></i>
+                    <h3>¡Compra Realizada con Éxito!</h3>
+                    <p>El producto ha sido comprado y su stock actualizado.</p>
+                </div>
+                
+                <div class="seller-contact-card">
+                    <h4><i class="fa-solid fa-address-book"></i> Ponerse en contacto con el vendedor</h4>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-label">Vendedor:</span>
+                            <span class="contact-value" id="seller-name-info">Cargando...</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">Correo:</span>
+                            <span class="contact-value" id="seller-email-info">Cargando...</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-label">Teléfono:</span>
+                            <span class="contact-value" id="seller-phone-info">Cargando...</span>
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        <a href="#" id="btn-contact-whatsapp" class="contact-btn whatsapp-btn" target="_blank" style="display: none;">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="#" id="btn-contact-email" class="contact-btn email-btn" target="_blank" style="display: none;">
+                            <i class="fa-solid fa-envelope"></i> Enviar Correo
+                        </a>
+                    </div>
+                </div>
+
+                <div class="delivery-info-card">
+                    <h4><i class="fa-solid fa-truck-fast"></i> Información de Entrega</h4>
+                    <div class="form-group">
+                        <label for="buyer-phone">Teléfono de contacto:</label>
+                        <input type="text" id="buyer-phone" placeholder="Tu número telefónico..." class="panel-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="buyer-address">Dirección de entrega:</label>
+                        <textarea id="buyer-address" placeholder="Dirección completa para recibir el producto..." class="panel-textarea"></textarea>
+                    </div>
+                    <button id="btn-save-delivery-info" class="save-info-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Información
+                    </button>
+                    <span id="delivery-info-status" class="status-msg"></span>
+                </div>
+
+                <div class="panel-actions">
+                    <a href="mimonedero.html" class="panel-nav-btn"><i class="fa-solid fa-wallet"></i> Ver Mi Monedero</a>
+                    <a href="mercado.html" class="panel-nav-btn secondary"><i class="fa-solid fa-store"></i> Volver al Mercado</a>
+                </div>
+            </div>
+        `;
+
+        try {
+            // 1. Obtener datos de contacto del vendedor
+            const { data: profileSeller } = await supabase
+                .from('usuarios_perfil')
+                .select('nombre_completo, telefono')
+                .eq('autenticacion_id', producto.vendedor_id)
+                .maybeSingle();
+
+            const { data: authSeller } = await supabase
+                .from('autenticacion')
+                .select('email, nombre_usuario')
+                .eq('autenticacion_id', producto.vendedor_id)
+                .maybeSingle();
+
+            const sellerName = profileSeller?.nombre_completo || authSeller?.nombre_usuario || 'Vendedor';
+            const sellerEmail = authSeller?.email || 'No especificado';
+            const sellerPhone = profileSeller?.telefono || 'No especificado';
+
+            document.getElementById('seller-name-info').textContent = sellerName;
+            document.getElementById('seller-email-info').textContent = sellerEmail;
+            document.getElementById('seller-phone-info').textContent = sellerPhone;
+
+            // Enlace de Correo
+            const btnEmail = document.getElementById('btn-contact-email');
+            if (authSeller?.email) {
+                btnEmail.href = `mailto:${authSeller.email}?subject=Biddo%20-%20Compra%20de%20${encodeURIComponent(producto.nombre_producto)}`;
+                btnEmail.style.display = 'inline-flex';
+            }
+
+            // Enlace de WhatsApp
+            const btnWhatsapp = document.getElementById('btn-contact-whatsapp');
+            if (profileSeller?.telefono && profileSeller.telefono !== 'No especificado') {
+                const cleanPhone = profileSeller.telefono.replace(/[^\d+]/g, '');
+                btnWhatsapp.href = `https://wa.me/${cleanPhone.startsWith('+') ? cleanPhone.slice(1) : cleanPhone}?text=Hola%20${encodeURIComponent(sellerName)}%2C%20te%20escribo%20desde%20Biddo%20por%20la%20compra%20de%20tu%20producto%20%22${encodeURIComponent(producto.nombre_producto)}%22.`;
+                btnWhatsapp.style.display = 'inline-flex';
+            }
+
+            // 2. Obtener datos actuales del comprador
+            const { data: profileBuyer } = await supabase
+                .from('usuarios_perfil')
+                .select('telefono, direccion_usuario')
+                .eq('autenticacion_id', session.user.id)
+                .maybeSingle();
+
+            if (profileBuyer) {
+                if (profileBuyer.telefono) {
+                    document.getElementById('buyer-phone').value = profileBuyer.telefono;
+                }
+                if (profileBuyer.direccion_usuario) {
+                    document.getElementById('buyer-address').value = profileBuyer.direccion_usuario;
+                }
+            }
+
+            // 3. Guardar datos de entrega del comprador
+            const btnSave = document.getElementById('btn-save-delivery-info');
+            btnSave.addEventListener('click', async () => {
+                const newPhone = document.getElementById('buyer-phone').value.trim();
+                const newAddress = document.getElementById('buyer-address').value.trim();
+                const statusMsg = document.getElementById('delivery-info-status');
+
+                if (!newPhone || !newAddress) {
+                    statusMsg.style.color = '#f87171';
+                    statusMsg.textContent = '⚠️ Por favor, ingresa teléfono y dirección.';
+                    return;
+                }
+
+                statusMsg.style.color = '#3b82f6';
+                statusMsg.textContent = '⏳ Guardando información de envío...';
+
+                // Modificación segura: SELECT previo para decidir INSERT o UPDATE y evadir restricciones UNIQUE faltantes
+                let saveError = null;
+                try {
+                    const { data: profileExists } = await supabase
+                        .from('usuarios_perfil')
+                        .select('autenticacion_id')
+                        .eq('autenticacion_id', session.user.id)
+                        .maybeSingle();
+
+                    if (profileExists) {
+                        const { error: updateErr } = await supabase
+                            .from('usuarios_perfil')
+                            .update({
+                                telefono: newPhone,
+                                direccion_usuario: newAddress
+                            })
+                            .eq('autenticacion_id', session.user.id);
+                        saveError = updateErr;
+                    } else {
+                        const { error: insertErr } = await supabase
+                            .from('usuarios_perfil')
+                            .insert([{
+                                autenticacion_id: session.user.id,
+                                telefono: newPhone,
+                                direccion_usuario: newAddress,
+                                nombre_completo: session.user.email.split('@')[0]
+                            }]);
+                        saveError = insertErr;
+                    }
+
+                    // Actualizar también en la tabla 'envios' del registro actual de compra
+                    if (!saveError && envioId) {
+                        const { error: updateEnvioErr } = await supabase
+                            .from('envios')
+                            .update({
+                                telefono_contacto: newPhone,
+                                direccion_entrega: newAddress
+                            })
+                            .eq('envio_id', envioId);
+                        
+                        if (updateEnvioErr) {
+                            console.warn("No se pudo actualizar el envío:", updateEnvioErr.message);
+                        }
+                    }
+                } catch (err) {
+                    saveError = err;
+                }
+
+                if (saveError) {
+                    statusMsg.style.color = '#f87171';
+                    statusMsg.textContent = '❌ Error al guardar: ' + saveError.message;
+                } else {
+                    statusMsg.style.color = '#4ade80';
+                    statusMsg.textContent = '✅ ¡Información de envío guardada con éxito!';
+                }
+            });
+
+        } catch (err) {
+            console.error('Error al cargar panel post-compra:', err.message);
+        }
     }
 
     function moveSlider(wrapper, direction) {

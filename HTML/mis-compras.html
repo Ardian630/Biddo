@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biddo - Gestionar Productos</title>
+    <title>Biddo - Mis Compras y Envíos (Comprador)</title>
     <link rel="stylesheet" href="../CSS/mimonedero.css">
     <link rel="stylesheet" href="../CSS/mercado.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -36,27 +36,6 @@
             font-size: 0.95rem;
             margin: 4px 0 0 0;
         }
-        .btn-publicar-nuevo {
-            background: var(--accent-purple, #974ade);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            white-space: nowrap;
-        }
-        .btn-publicar-nuevo:hover {
-            box-shadow: 0 0 20px rgba(151, 74, 222, 0.4);
-            transform: translateY(-2px);
-        }
         .ops-table-wrapper {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -72,7 +51,7 @@
             font-size: 0.95rem;
         }
         .ops-table th, .ops-table td {
-            padding: 18px 28px;
+            padding: 18px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .ops-table th {
@@ -87,56 +66,29 @@
         .ops-table tr:hover {
             background: rgba(255, 255, 255, 0.01);
         }
-        .btn-action-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .btn-admin {
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
+        .badge-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
         }
-        .btn-edit {
-            background: rgba(151, 74, 222, 0.15);
-            color: var(--accent-purple, #974ade);
-            border: 1px solid rgba(151, 74, 222, 0.3);
+        .badge-pending {
+            background: rgba(234, 179, 8, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(234, 179, 8, 0.3);
         }
-        .btn-edit:hover {
-            background: var(--accent-purple, #974ade);
-            color: #fff;
-        }
-        .btn-delete {
-            background: rgba(248, 113, 113, 0.15);
-            color: var(--error-red, #f87171);
-            border: 1px solid rgba(248, 113, 113, 0.3);
-        }
-        .btn-delete:hover {
-            background: var(--error-red, #f87171);
-            color: #fff;
+        .badge-shipped {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
         .no-data {
             text-align: center;
             padding: 40px;
             color: var(--text-muted);
             font-style: italic;
-        }
-        #alert-banner {
-            display: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            text-align: center;
         }
     </style>
 </head>
@@ -149,7 +101,7 @@
                 <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
                 <li id="nav-monedero"><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
                 <li id="nav-mercado"><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
-                <li id="nav-subastas"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <li id="nav-subastas" style="display:none;"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
                 <li id="nav-admin-ops" style="display: none;"></li>
             </ul>
 
@@ -179,38 +131,34 @@
 
         <header class="admin-header">
             <div>
-                <h2>Gestionar Productos</h2>
-                <p>Administra tus publicaciones en el mercado</p>
+                <h2>Mis Compras</h2>
+                <p>Monitorea el estado del envío de tus compras</p>
             </div>
-            <a href="publicar-producto.html" class="btn-publicar-nuevo">
-                <i class="fa-solid fa-plus"></i> Publicar un nuevo producto
-            </a>
         </header>
-
-        <div id="alert-banner"></div>
 
         <div class="ops-table-wrapper">
             <table class="ops-table">
                 <thead>
                     <tr>
                         <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Precio (BDC)</th>
-                        <th>Stock</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
+                        <th>Vendedor</th>
+                        <th>Cant.</th>
+                        <th>Precio Unit.</th>
+                        <th>Total</th>
+                        <th>Estado de Envío</th>
+                        <th>Fecha de Envío</th>
+                        <th>Fecha Compra</th>
                     </tr>
                 </thead>
-                <tbody id="productos-tbody">
+                <tbody id="compras-tbody">
                     <tr>
-                        <td colspan="7" class="no-data">Cargando productos...</td>
+                        <td colspan="8" class="no-data">Cargando tus compras...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
     <script type="module" src="../JS/auth-header.js"></script>
-    <script type="module" src="../JS/gestionar-productos.js"></script>
+    <script type="module" src="../JS/mis-compras.js"></script>
 </body>
 </html>

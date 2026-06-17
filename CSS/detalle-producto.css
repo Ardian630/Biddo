@@ -85,6 +85,11 @@
     transition: color 0.3s;
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+}
+
 .detail-back-link:hover {
     color: #fff;
 }
@@ -108,4 +113,248 @@
     .product-detail-info .product-title {
         font-size: 1.4rem;
     }
+}
+
+/* Estilos para el panel post-compra */
+.success-panel {
+    margin-top: 25px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(151, 74, 222, 0.25);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-header {
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+}
+
+.success-icon {
+    font-size: 3rem;
+    color: #4ade80;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+}
+
+.success-header h3 {
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 6px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.success-header p {
+    font-size: 0.9rem;
+    color: var(--text-dim, #94a3b8);
+}
+
+.seller-contact-card, .delivery-info-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.seller-contact-card h4, .delivery-info-card h4 {
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.seller-contact-card h4 i, .delivery-info-card h4 i {
+    color: var(--accent-purple, #974ade);
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.contact-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.contact-label {
+    color: var(--text-dim, #94a3b8);
+}
+
+.contact-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.contact-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.contact-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.whatsapp-btn {
+    background: #25d366;
+    color: #fff;
+}
+
+.whatsapp-btn:hover {
+    background: #20ba5a;
+    transform: translateY(-1px);
+}
+
+.email-btn {
+    background: #3f3f46;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.email-btn:hover {
+    background: #52525b;
+    transform: translateY(-1px);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    color: var(--text-dim, #94a3b8);
+}
+
+.panel-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.panel-input:focus {
+    border-color: var(--accent-purple, #974ade);
+}
+
+.panel-textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    min-height: 80px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.panel-textarea:focus {
+    border-color: var(--accent-purple, #974ade);
+}
+
+.save-info-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #974ade 0%, #6366f1 100%);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.save-info-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.status-msg {
+    display: block;
+    text-align: center;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.panel-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.panel-nav-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent-purple, #974ade);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.panel-nav-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.panel-nav-btn.secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-dim, #94a3b8);
+}
+
+.panel-nav-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
 }

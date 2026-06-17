@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biddo - Gestionar Productos</title>
+    <title>Biddo - Envíos Pendientes (Vendedor)</title>
     <link rel="stylesheet" href="../CSS/mimonedero.css">
     <link rel="stylesheet" href="../CSS/mercado.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -36,27 +36,6 @@
             font-size: 0.95rem;
             margin: 4px 0 0 0;
         }
-        .btn-publicar-nuevo {
-            background: var(--accent-purple, #974ade);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            white-space: nowrap;
-        }
-        .btn-publicar-nuevo:hover {
-            box-shadow: 0 0 20px rgba(151, 74, 222, 0.4);
-            transform: translateY(-2px);
-        }
         .ops-table-wrapper {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -72,7 +51,7 @@
             font-size: 0.95rem;
         }
         .ops-table th, .ops-table td {
-            padding: 18px 28px;
+            padding: 18px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .ops-table th {
@@ -90,7 +69,6 @@
         .btn-action-group {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
         }
         .btn-admin {
             border: none;
@@ -106,23 +84,19 @@
             font-family: 'Poppins', sans-serif;
             text-decoration: none;
         }
-        .btn-edit {
-            background: rgba(151, 74, 222, 0.15);
-            color: var(--accent-purple, #974ade);
-            border: 1px solid rgba(151, 74, 222, 0.3);
+        .btn-ship {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--neon-green, #4ade80);
+            border: 1px solid rgba(74, 222, 128, 0.3);
         }
-        .btn-edit:hover {
-            background: var(--accent-purple, #974ade);
-            color: #fff;
+        .btn-ship:hover:not(:disabled) {
+            background: var(--neon-green, #4ade80);
+            color: #101014;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
         }
-        .btn-delete {
-            background: rgba(248, 113, 113, 0.15);
-            color: var(--error-red, #f87171);
-            border: 1px solid rgba(248, 113, 113, 0.3);
-        }
-        .btn-delete:hover {
-            background: var(--error-red, #f87171);
-            color: #fff;
+        .btn-ship:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         .no-data {
             text-align: center;
@@ -149,7 +123,7 @@
                 <li><a href="../HTML/2inicio.html" class="anchors">Inicio</a></li>
                 <li id="nav-monedero"><a href="../HTML/mimonedero.html" class="anchors">Monedero</a></li>
                 <li id="nav-mercado"><a href="../HTML/mercado.html" class="anchors">Mercado</a></li>
-                <li id="nav-subastas"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
+                <li id="nav-subastas" style="display:none;"><a href="../HTML/subastas.html" class="anchors">Subasta</a></li>
                 <li id="nav-admin-ops" style="display: none;"></li>
             </ul>
 
@@ -179,12 +153,9 @@
 
         <header class="admin-header">
             <div>
-                <h2>Gestionar Productos</h2>
-                <p>Administra tus publicaciones en el mercado</p>
+                <h2>Envíos Pendientes</h2>
+                <p>Gestiona los despachos de tus productos vendidos</p>
             </div>
-            <a href="publicar-producto.html" class="btn-publicar-nuevo">
-                <i class="fa-solid fa-plus"></i> Publicar un nuevo producto
-            </a>
         </header>
 
         <div id="alert-banner"></div>
@@ -194,23 +165,24 @@
                 <thead>
                     <tr>
                         <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Precio (BDC)</th>
-                        <th>Stock</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
+                        <th>Comprador</th>
+                        <th>Cant.</th>
+                        <th>Total</th>
+                        <th>Teléfono</th>
+                        <th>Dirección de Entrega</th>
+                        <th>Fecha Compra</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
-                <tbody id="productos-tbody">
+                <tbody id="envios-tbody">
                     <tr>
-                        <td colspan="7" class="no-data">Cargando productos...</td>
+                        <td colspan="8" class="no-data">Cargando envíos...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
     <script type="module" src="../JS/auth-header.js"></script>
-    <script type="module" src="../JS/gestionar-productos.js"></script>
+    <script type="module" src="../JS/envios-vendedor.js"></script>
 </body>
 </html>

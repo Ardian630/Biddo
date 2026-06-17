@@ -32,19 +32,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 nombre_producto,
                 precio_bdc,
                 fecha_publicacion,
+                stock,
+                activo,
                 categorias ( nombre_categoria )
             `)
             .eq('vendedor_id', vendedorId)
-            .eq('activo', true)
             .order('fecha_publicacion', { ascending: false });
 
         if (error) {
-            tbody.innerHTML = '<tr><td colspan="5" class="no-data">No se pudieron cargar los productos.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="no-data">No se pudieron cargar los productos.</td></tr>';
             return;
         }
 
         if (!productos.length) {
-            tbody.innerHTML = '<tr><td colspan="5" class="no-data">No tienes productos publicados. ¡Publica tu primer producto!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="no-data">No tienes productos publicados. ¡Publica tu primer producto!</td></tr>';
             return;
         }
 
@@ -59,11 +60,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const categoria = producto.categorias?.nombre_categoria || 'Sin categoría';
         const precio = parseFloat(producto.precio_bdc).toFixed(2);
         const fecha = new Date(producto.fecha_publicacion).toLocaleDateString('es-VE');
+        const stock = producto.stock !== undefined ? producto.stock : 1;
+        const estadoLabel = producto.activo ? 'Activo' : 'Inactivo';
+        const estadoColor = producto.activo ? 'var(--neon-green, #4ade80)' : 'var(--error-red, #f87171)';
 
         tr.innerHTML = `
             <td>${escapeHtml(producto.nombre_producto)}</td>
             <td>${escapeHtml(categoria)}</td>
             <td>${precio}</td>
+            <td>${stock}</td>
+            <td><span style="color: ${estadoColor}; font-weight: 600;">${estadoLabel}</span></td>
             <td>${fecha}</td>
             <td>
                 <div class="btn-action-group">

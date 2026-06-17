@@ -110,6 +110,15 @@
                     <span class="field-hint">El precio debe ser mayor a 0 BDC</span>
                 </div>
 
+                <div class="input-group">
+                    <label for="stock">Stock (Unidades disponibles)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <input type="number" id="stock" min="0" step="1" placeholder="0" required>
+                    </div>
+                    <span class="field-hint">Si el stock es 0, el producto se desactivará del catálogo</span>
+                </div>
+
                 <button type="submit" class="login-submit" id="btn-guardar">Guardar Cambios</button>
             </form>
 

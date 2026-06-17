@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     // Si el usuario está logueado pero NO es rol 1 ni 2 (Reseteo de seguridad)
                     if (navMercado) navMercado.style.display = 'block';
-                    if (navSubastas) navSubastas.style.display = 'block';
+                    if (navSubastas) navSubastas.style.display = 'none'; // Subastas desactivadas
                     if (navAdminOps) navAdminOps.style.display = 'none';
                     const elTasas = document.getElementById('dropdown-tasas');
                     if (elTasas) elTasas.remove();
@@ -114,7 +114,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // Vendedores (rol_id === 3): enlace para gestionar productos
+                    // Agregar enlace "Mis Compras" para todos los usuarios normales
+                    if (!document.getElementById('dropdown-mis-compras')) {
+                        const liCompras = document.createElement('li');
+                        liCompras.id = 'dropdown-mis-compras';
+                        liCompras.innerHTML = `<a href="../HTML/mis-compras.html"><i class="fa-solid fa-bag-shopping"></i> Mis Compras</a>`;
+                        const divider = dropdownMenu.querySelector('.divider');
+                        if (divider) {
+                            dropdownMenu.insertBefore(liCompras, divider);
+                        } else {
+                            dropdownMenu.appendChild(liCompras);
+                        }
+                    }
+
+                    // Vendedores (rol_id === 3): enlaces para gestionar productos y envíos
                     if (authData && authData.rol_id === 3) {
                         if (!document.getElementById('dropdown-gestionar')) {
                             const liGestionar = document.createElement('li');
@@ -127,9 +140,23 @@ document.addEventListener('DOMContentLoaded', () => {
                                 dropdownMenu.appendChild(liGestionar);
                             }
                         }
+                        
+                        if (!document.getElementById('dropdown-mis-envios')) {
+                            const liEnvios = document.createElement('li');
+                            liEnvios.id = 'dropdown-mis-envios';
+                            liEnvios.innerHTML = `<a href="../HTML/envios-vendedor.html"><i class="fa-solid fa-truck-fast"></i> Mis Envíos</a>`;
+                            const divider = dropdownMenu.querySelector('.divider');
+                            if (divider) {
+                                dropdownMenu.insertBefore(liEnvios, divider);
+                            } else {
+                                dropdownMenu.appendChild(liEnvios);
+                            }
+                        }
                     } else {
                         const elGestionar = document.getElementById('dropdown-gestionar');
                         if (elGestionar) elGestionar.remove();
+                        const elEnvios = document.getElementById('dropdown-mis-envios');
+                        if (elEnvios) elEnvios.remove();
                     }
                 }
                 // ========================================================
@@ -158,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userMenuContainer) userMenuContainer.style.display = 'none';
             if (navMonedero) navMonedero.style.display = 'none';
             if (navMercado) navMercado.style.display = 'block';
-            if (navSubastas) navSubastas.style.display = 'block';
+            if (navSubastas) navSubastas.style.display = 'none'; // Subastas desactivadas para todos
             if (navAdminOps) navAdminOps.style.display = 'none';
             if (userAvatarNav) userAvatarNav.src = "../assets/img/user1.jpeg";
             
@@ -167,6 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (elTasas) elTasas.remove();
             const elGestionar = document.getElementById('dropdown-gestionar');
             if (elGestionar) elGestionar.remove();
+            const elCompras = document.getElementById('dropdown-mis-compras');
+            if (elCompras) elCompras.remove();
+            const elEnvios = document.getElementById('dropdown-mis-envios');
+            if (elEnvios) elEnvios.remove();
         }
     }
 

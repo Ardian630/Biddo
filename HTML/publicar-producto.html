@@ -204,6 +204,15 @@
                     <span class="field-hint">El precio debe ser mayor a 0 BDC</span>
                 </div>
 
+                <div class="input-group">
+                    <label for="stock">Stock (Unidades disponibles)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <input type="number" id="stock" min="1" step="1" value="1" placeholder="1" required>
+                    </div>
+                    <span class="field-hint">Mínimo 1 unidad</span>
+                </div>
+
                 <button type="submit" class="login-submit" id="btn-publicar">Publicar en el Mercado</button>
             </form>
 

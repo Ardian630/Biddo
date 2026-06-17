@@ -52,6 +52,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     let datosReales = { numero: '', fecha: '' };
     let esVisible = false;
 
+    // Ocultar sección de acciones si es admin (rol 1) o sub-admin (rol 2)
+    try {
+        const { data: authData } = await supabase
+            .from('autenticacion')
+            .select('rol_id')
+            .eq('autenticacion_id', userUUID)
+            .maybeSingle();
+
+        if (authData && (authData.rol_id === 1 || authData.rol_id === 2)) {
+            const actionsSection = document.querySelector('.actions');
+            if (actionsSection) {
+                actionsSection.style.display = 'none';
+            }
+        }
+    } catch (err) {
+        console.error("Error al verificar rol del usuario:", err.message);
+    }
+
     // Ejecutar la carga inicial
     await cargarDatos();
 

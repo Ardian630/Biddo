@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (tipo === 'retiro') {
                         await rechazarRetiro(opId, monederoId, monto, comision);
                     } else {
-                        await rechazarRecarga(opId);
+                        await rechazarRecarga(opId, monederoId, monto);
                     }
                     showAlert(`❌ Operación #${opId} rechazada.`, '#eab308');
                     await consultarOperacionesPendientes();
@@ -250,17 +250,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const { data: monedero, error: monederoErr } = await supabase
             .from('monederos')
-            .select('bdc_disponible')
+            .select('bdc_disponible, bdc_retenido')
             .eq('monedero_id', monederoId)
             .maybeSingle();
 
         if (monederoErr) throw monederoErr;
 
-        const nuevoSaldo = (parseFloat(monedero?.bdc_disponible) || 0) + bdcAAcreditar;
+        const nuevoRetenido = Math.max(0, (parseFloat(monedero?.bdc_retenido) || 0) - bdcAAcreditar);
+        const nuevoDisponible = (parseFloat(monedero?.bdc_disponible) || 0) + bdcAAcreditar;
 
         const { error: balanceErr } = await supabase
             .from('monederos')
-            .update({ bdc_disponible: nuevoSaldo })
+            .update({ bdc_disponible: nuevoDisponible, bdc_retenido: nuevoRetenido })
             .eq('monedero_id', monederoId);
 
         if (balanceErr) throw balanceErr;
@@ -273,10 +274,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (opErr) throw opErr;
     }
 
-    async function rechazarRecarga(opId) {
+    async function rechazarRecarga(opId, monederoId, bdcASustraer) {
+        const ahora = new Date().toISOString();
+
+        const { data: monedero, error: monederoErr } = await supabase
+            .from('monederos')
+            .select('bdc_retenido')
+            .eq('monedero_id', monederoId)
+            .maybeSingle();
+
+        if (monederoErr) throw monederoErr;
+
+        const nuevoRetenido = Math.max(0, (parseFloat(monedero?.bdc_retenido) || 0) - bdcASustraer);
+
+        const { error: balanceErr } = await supabase
+            .from('monederos')
+            .update({ bdc_retenido: nuevoRetenido })
+            .eq('monedero_id', monederoId);
+
+        if (balanceErr) throw balanceErr;
+
         const { error } = await supabase
             .from('operaciones')
-            .update({ estado_operacion: 'Fallida', fecha_finalizacion: new Date().toISOString() })
+            .update({ estado_operacion: 'Fallida', fecha_finalizacion: ahora })
             .eq('operacion_id', opId);
 
         if (error) throw error;
